@@ -1,0 +1,15 @@
+{
+  "locales": ["en-US", "zh"],
+  "defaultLocale": "en-US",
+  "pages": {
+    "*": ["header", "footer", "_404", "offline"],
+    "/contactus": ["contactus"],
+    "/home": ["home"],
+    "/portfolio": ["portfolio"],
+    "/portfolio/public/[id]": ["portfolio"],
+    "/steps": ["steps"],
+    "/universities": ["universities"],
+    "/myuniversities": ["universities"],
+    "/auth/loginsignup": ["login", "signup"]
+  }
+}

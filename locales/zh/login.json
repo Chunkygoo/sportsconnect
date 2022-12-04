@@ -1,0 +1,13 @@
+{
+  "image_description": "帮助运动员链接世界各地的大学",
+  "subheader": "帐户",
+  "username": "用户名",
+  "example_username": "John Doe",
+  "password": "密码",
+  "example_password": "你的密码",
+  "log_in": "登录",
+  "description": "还没有帐户？",
+  "sign_up": "注册",
+  "invalid_credentials": "您的有户名或者密码错误",
+  "error": "发生错误。请刷新页面，然后重试。"
+}

@@ -1,0 +1,13 @@
+{
+  "image_description": "Connecting athletes to universities across the world",
+  "subheader": "to access your account",
+  "username": "Username",
+  "example_username": "John Doe",
+  "password": "Password",
+  "example_password": "Your Password",
+  "log_in": "Log in",
+  "description": "Don't have an account yet? ",
+  "sign_up": "Sign up",
+  "invalid_credentials": "Invalid credentials",
+  "error": "An error occured, please refresh and try again"
+}

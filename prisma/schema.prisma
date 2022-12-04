@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserInfo {
+  id               String           @id
+  email            String           @unique
+  name             String?
+  wechatId         String?
+  preferredName    String?
+  bio              String?
+  gender           String?
+  contactNumber    String?
+  currentAddress   String?
+  permanentAddress String?
+  birthday         DateTime?        @db.Date
+  createdAt        DateTime         @default(now())
+  public           Boolean          @default(false)
+  experiences      Experience[]
+  educations       Education[]
+  profilePhoto     ProfilePhoto?
+  role             Role             @default(USER)
+  unis             UserInfoOnUnis[]
+}
+
+model Experience {
+  id          Int       @id @default(autoincrement())
+  description String?
+  active      Boolean?  @default(false)
+  startDate   DateTime? @db.Date
+  endDate     DateTime? @db.Date
+  createdAt   DateTime  @default(now())
+  owner       UserInfo  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+}
+
+model Education {
+  id          Int       @id @default(autoincrement())
+  description String?
+  active      Boolean?  @default(false)
+  startDate   DateTime? @db.Date
+  endDate     DateTime? @db.Date
+  createdAt   DateTime  @default(now())
+  owner       UserInfo  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+}
+
+model ProfilePhoto {
+  id        Int        @id @default(autoincrement())
+  key       String
+  userInfo  UserInfo @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
+  userInfoId String  @unique
+}
+
+model University {
+  id         Int              @id @default(autoincrement())
+  name       String
+  city       String
+  state      String
+  conference String
+  division   String
+  category   String
+  region     String
+  createdAt  DateTime         @default(now())
+  userInfo   UserInfoOnUnis[]
+}
+
+model UserInfoOnUnis {
+  userInfo     UserInfo   @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
+  userInfoId   String
+  university   University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  universityId Int
+  
+  @@id([userInfoId, universityId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

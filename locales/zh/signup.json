@@ -1,0 +1,12 @@
+{
+  "subheader": "注册账号以访问您的账号",
+  "username": "用户名",
+  "example_username": "John Doe",
+  "password": "密码",
+  "example_password": "你的密码",
+  "sign_up": "注册",
+  "description": "已经有一个帐户?",
+  "log_in": "登录",
+  "invalid_credentials": "邮箱已被其他用户使用",
+  "error": "发生错误。请刷新页面，然后重试。"
+}

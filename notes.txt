@@ -1,0 +1,3 @@
+nullish = property | null | undefined
+optional = property | undefined
+nullable = property | null
