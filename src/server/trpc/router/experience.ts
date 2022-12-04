@@ -23,7 +23,7 @@ export const experienceRouter = router({
             })
           ).experiences.length >= 5
         ) {
-          // only allow 5 experience per user
+          // only allow 5 experiences per user
           return;
         }
         const res = await ctx.prisma.experience.create({
@@ -46,12 +46,12 @@ export const experienceRouter = router({
     }),
   getExperiences: publicProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.prisma.userInfo.findUniqueOrThrow({
+      return await ctx.prisma.experience.findMany({
         where: {
-          id: "1",
+          ownerId: "1",
         },
-        select: {
-          experiences: true,
+        orderBy: {
+          createdAt: "asc",
         },
       });
     } catch (error) {
@@ -103,12 +103,12 @@ export const experienceRouter = router({
     .input(experienceReadForUserSchema)
     .query(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.userInfo.findUniqueOrThrow({
+        return await ctx.prisma.experience.findMany({
           where: {
-            id: input.id,
+            ownerId: input.id,
           },
-          select: {
-            experiences: true,
+          orderBy: {
+            createdAt: "asc",
           },
         });
       } catch (error) {

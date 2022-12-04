@@ -21,7 +21,7 @@ export default function ItemRow({
   return (
     <Fragment>
       <li>
-        <div className="flex justify-between text-blue-600">
+        <div className="mr-2 flex justify-between text-blue-600">
           <DebounceInput
             disabled={isDisabled}
             debounceTimeout={1000}
@@ -35,18 +35,18 @@ export default function ItemRow({
             onChange={(e) =>
               updateItem({ ...itemRowObject, description: e.target.value })
             }
-            className="mt-0 w-full  appearance-none border-0 border-b-2 border-gray-200 px-0 pt-3 pb-2 focus:border-black focus:outline-none focus:ring-0"
+            className="mt-0 mr-2 w-full appearance-none  border-0 border-b-2 border-gray-200 bg-transparent px-0 pt-3 pb-2 focus:border-black focus:outline-none focus:ring-0"
           />
-          {!isDisabled && (
-            <span className="mr-4 border-0 border-gray-200 pt-4 pb-2 focus:border-black focus:outline-none focus:ring-0">
+          <span className="border-0 border-gray-200 pt-4 pb-2 focus:border-black focus:outline-none focus:ring-0">
+            {!isDisabled && (
               <BsFillTrashFill
                 className="h-5 w-5 text-red-500 hover:cursor-pointer"
                 onClick={() => {
-                  deleteItem({ id: itemRowObject.id });
+                  if (!isDisabled) deleteItem({ id: itemRowObject.id });
                 }}
               />
-            </span>
-          )}
+            )}
+          </span>
         </div>
         <div className="flex justify-between text-xs text-gray-500">
           <div className="flex">
@@ -56,13 +56,13 @@ export default function ItemRow({
               onChange={(date: Date) => {
                 updateItem({ ...itemRowObject, startDate: date });
               }}
-              className="m-0 max-w-[4rem] border-0 border-gray-200 p-0 text-xs 
+              className="m-0 max-w-[4rem] border-0 border-gray-200 bg-transparent p-0 text-xs 
                           hover:cursor-pointer focus:border-black focus:outline-none focus:ring-0"
               wrapperClassName="max-w-[4.2rem] mr-1"
             />{" "}
-            to{" "}
+            to
             {itemRowObject.active ? (
-              <span className="ml-2">present</span>
+              <span className="ml-1">present</span>
             ) : (
               <YearMonthDayPicker
                 isDisabled={isDisabled}
@@ -70,9 +70,9 @@ export default function ItemRow({
                 onChange={(date: Date) => {
                   updateItem({ ...itemRowObject, endDate: date });
                 }}
-                className="m-0 max-w-[4rem] border-0 border-gray-200 p-0 text-xs
+                className="m-0 max-w-[4rem] border-0 border-gray-200 bg-transparent p-0 text-xs 
                           hover:cursor-pointer focus:border-black focus:outline-none focus:ring-0"
-                wrapperClassName="max-w-[4.2rem] ml-2"
+                wrapperClassName="max-w-[4.2rem] ml-1"
               />
             )}
           </div>

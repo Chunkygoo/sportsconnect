@@ -69,3 +69,7 @@ textarea:disabled {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.react-datepicker__input-container > input:disabled {
+  color: grey;
+}

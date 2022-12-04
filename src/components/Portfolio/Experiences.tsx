@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import swal from "sweetalert";
-import type { educationReadType } from "../../types/education";
+import { v4 as uuidv4 } from "uuid";
 import type { experienceReadType } from "../../types/experience";
 import { trpc } from "../../utils/trpc";
 import Template from "./Template";
@@ -13,9 +13,9 @@ export default function Experiences({ isDisabled = true }) {
   const router = useRouter();
   const utils = trpc.useContext();
 
-  const { mutate: createExperience, isLoading: isCreateLoading } =
+  const { mutate: createExperience } =
     trpc.experience.createExperience.useMutation({
-      onMutate() {
+      async onMutate() {
         if (Object.keys(data).length >= 5) {
           swal(
             "Optimize your portfolio",
@@ -23,71 +23,45 @@ export default function Experiences({ isDisabled = true }) {
           );
           return;
         }
-        const lastKey =
-          Object.keys(data)[Object.keys(data).length - 1] || "Infinity";
-        const tempTimeStamp = new Date(Date.now());
+        await utils.experience.getExperiences.cancel();
+        const previousData = utils.experience.getExperiences.getData();
+        const tempkey = "tempKey" + uuidv4();
         setData((prevData) => {
           const newData = { ...prevData };
-          if (lastKey) {
-            (newData as Record<number, educationReadType | experienceReadType>)[
-              parseInt(lastKey) + 1
-            ] = {
-              id: parseInt(lastKey) + 1,
-              description: "",
-              active: false,
-              startDate: tempTimeStamp,
-              endDate: null,
-            };
-          } else {
-            (
-              newData as Record<number, educationReadType | experienceReadType>
-            )[1] = {
-              id: parseInt(lastKey) + 1,
-              description: "",
-              active: false,
-              startDate: tempTimeStamp,
-              endDate: null,
-            };
-          }
+          (newData as Record<string, experienceReadType>)[tempkey] = {
+            id: tempkey,
+            description: "",
+            active: false,
+            startDate: null,
+            endDate: null,
+          };
           return newData;
         });
-        return { tempTimeStamp };
+        return { tempkey, previousData };
       },
       onSuccess(id, _, context) {
-        if (id) {
+        if (id && context?.tempkey) {
           setData((prevData) => {
             const newData = { ...prevData };
-            for (const [key, value] of Object.entries(newData)) {
-              if (
-                (value as educationReadType | experienceReadType).startDate ===
-                context?.tempTimeStamp
-              ) {
-                delete (
-                  newData as Record<
-                    number,
-                    educationReadType | experienceReadType
-                  >
-                )[parseInt(key)];
-                (
-                  newData as Record<
-                    number,
-                    educationReadType | experienceReadType
-                  >
-                )[id] = {
-                  id: id,
-                  description: "",
-                  active: false,
-                  startDate: null,
-                  endDate: null,
-                };
-                break;
-              }
-            }
+            delete (newData as Record<string, experienceReadType>)[
+              context?.tempkey
+            ];
+            (newData as Record<string, experienceReadType>)[id] = {
+              id: id,
+              description: "",
+              active: false,
+              startDate: null,
+              endDate: null,
+            };
             return newData;
           });
         }
       },
-      onError() {
+      onError(_, __, context) {
+        utils.experience.getExperiences.setData(
+          undefined,
+          context?.previousData
+        );
         toast.error("An error occured while creating", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
@@ -96,29 +70,9 @@ export default function Experiences({ isDisabled = true }) {
         utils.experience.getExperiences.invalidate();
       },
     });
-  const {
-    data: { experiences: experiences } = {},
-    isLoading: isGetExperienceLoading,
-  } = trpc.experience.getExperiences.useQuery(undefined, {
-    onSuccess({ experiences }) {
-      setData(experiences.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
-    },
-    onError() {
-      toast.error("An error occured while getting your data", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
-    },
-    enabled: !isDisabled,
-  });
-  const {
-    data: { experiences: experiencesForUser } = {},
-    isLoading: isGetExperienceForUserLoading,
-  } = trpc.experience.getExperiencesForUser.useQuery(
-    {
-      id: router.query.id as string,
-    },
-    {
-      onSuccess({ experiences }) {
+  const { data: experiences, isLoading: isGetExperienceLoading } =
+    trpc.experience.getExperiences.useQuery(undefined, {
+      onSuccess(experiences) {
         setData(experiences.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
       },
       onError() {
@@ -126,9 +80,25 @@ export default function Experiences({ isDisabled = true }) {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
       },
-      enabled: isDisabled,
-    }
-  );
+      enabled: !isDisabled,
+    });
+  const { data: experiencesForUser, isLoading: isGetExperienceForUserLoading } =
+    trpc.experience.getExperiencesForUser.useQuery(
+      {
+        id: router.query.id as string,
+      },
+      {
+        onSuccess(experiences) {
+          setData(experiences.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
+        },
+        onError() {
+          toast.error("An error occured while getting your data", {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          });
+        },
+        enabled: isDisabled,
+      }
+    );
   const { mutate: updateExperience } =
     trpc.experience.updateExperience.useMutation({
       async onMutate(newItemData) {
@@ -138,9 +108,8 @@ export default function Experiences({ isDisabled = true }) {
           const newData = { ...prevData };
           newItemData.startDate = newItemData.startDate;
           newItemData.endDate = newItemData.endDate;
-          (newData as Record<number, educationReadType | experienceReadType>)[
-            newItemData.id
-          ] = newItemData;
+          (newData as Record<string, experienceReadType>)[newItemData.id] =
+            newItemData;
           return newData;
         });
         return { previousData };
@@ -165,9 +134,7 @@ export default function Experiences({ isDisabled = true }) {
         const previousData = utils.experience.getExperiences.getData();
         setData((prevData) => {
           const newData = { ...prevData };
-          delete (
-            newData as Record<number, educationReadType | experienceReadType>
-          )[id];
+          delete (newData as Record<string, experienceReadType>)[id];
           return newData;
         });
         return { previousData };
@@ -215,7 +182,6 @@ export default function Experiences({ isDisabled = true }) {
   }
   return (
     <Template
-      endpoint={"/experiences"}
       title={t("portfolio:experience")}
       isDisabled={isDisabled}
       data={data}

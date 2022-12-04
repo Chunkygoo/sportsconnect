@@ -8,7 +8,7 @@ export const experienceCreateSchema = z.object({
 });
 
 export const experienceReadSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   description: z.string().nullable(),
   active: z.boolean().nullable(),
   startDate: z.date().nullable(),
@@ -16,7 +16,7 @@ export const experienceReadSchema = z.object({
 });
 
 export const experienceUpdateSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   description: z.string().nullable(),
   active: z.boolean().nullable(),
   startDate: z.date().nullable(),
@@ -24,7 +24,7 @@ export const experienceUpdateSchema = z.object({
 });
 
 export const experienceDeleteSchema = z.object({
-  id: z.number(),
+  id: z.string(),
 });
 
 export const experienceReadForUserSchema = z.object({

@@ -15,3 +15,7 @@ export const updateUserInfoSchema = z.object({
   public: z.boolean(),
   profilePhoto: z.object({ key: z.string() }).nullable(),
 });
+
+export const publicUserInfoSchema = z.object({
+  id: z.string(),
+});

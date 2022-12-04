@@ -12,7 +12,6 @@ import type {
 } from "./experience";
 
 export type templateType = {
-  endpoint: string;
   title: string;
   isDisabled: boolean;
   data:

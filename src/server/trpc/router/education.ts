@@ -46,12 +46,12 @@ export const educationRouter = router({
     }),
   getEducations: publicProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.prisma.userInfo.findUniqueOrThrow({
+      return await ctx.prisma.education.findMany({
         where: {
-          id: "1",
+          ownerId: "1",
         },
-        select: {
-          educations: true,
+        orderBy: {
+          createdAt: "asc",
         },
       });
     } catch (error) {
@@ -103,12 +103,12 @@ export const educationRouter = router({
     .input(educationReadForUserSchema)
     .query(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.userInfo.findUniqueOrThrow({
+        return await ctx.prisma.education.findMany({
           where: {
-            id: input.id,
+            ownerId: input.id,
           },
-          select: {
-            educations: true,
+          orderBy: {
+            createdAt: "asc",
           },
         });
       } catch (error) {

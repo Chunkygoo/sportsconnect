@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function YearMonthDayPicker({
   selected,
@@ -15,18 +14,18 @@ export default function YearMonthDayPicker({
   };
   const years = range(1920, new Date().getFullYear());
   const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   return (
     <ReactDatePicker
@@ -39,8 +38,8 @@ export default function YearMonthDayPicker({
         <div
           style={{
             margin: 10,
-            display: 'flex',
-            justifyContent: 'center',
+            display: "flex",
+            justifyContent: "center",
           }}
         >
           <select

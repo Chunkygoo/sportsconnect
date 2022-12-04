@@ -1,5 +1,7 @@
-import { z } from "zod";
-import { updateUserInfoSchema } from "../../../schema/userInfo";
+import {
+  publicUserInfoSchema,
+  updateUserInfoSchema,
+} from "../../../schema/userInfo";
 import { publicProcedure, router } from "../trpc";
 
 export const userInfoRouter = router({
@@ -59,7 +61,7 @@ export const userInfoRouter = router({
       }
     }),
   getPublicUserInfo: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(publicUserInfoSchema)
     .query(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.userInfo.findUniqueOrThrow({

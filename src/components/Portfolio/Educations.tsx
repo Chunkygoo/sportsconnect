@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import swal from "sweetalert";
+import { v4 as uuidv4 } from "uuid";
 import type { educationReadType } from "../../types/education";
-import type { experienceReadType } from "../../types/experience";
 import { trpc } from "../../utils/trpc";
 import Template from "./Template";
 
@@ -13,9 +13,9 @@ export default function Educations({ isDisabled = true }) {
   const router = useRouter();
   const utils = trpc.useContext();
 
-  const { mutate: createEducation, isLoading: isCreateLoading } =
+  const { mutate: createEducation } =
     trpc.education.createEducation.useMutation({
-      onMutate() {
+      async onMutate() {
         if (Object.keys(data).length >= 5) {
           swal(
             "Optimize your portfolio",
@@ -23,71 +23,42 @@ export default function Educations({ isDisabled = true }) {
           );
           return;
         }
-        const lastKey =
-          Object.keys(data)[Object.keys(data).length - 1] || "Infinity";
-        const tempTimeStamp = new Date(Date.now());
+        await utils.education.getEducations.cancel();
+        const previousData = utils.education.getEducations.getData();
+        const tempkey = "tempKey" + uuidv4();
         setData((prevData) => {
           const newData = { ...prevData };
-          if (lastKey) {
-            (newData as Record<number, educationReadType | experienceReadType>)[
-              parseInt(lastKey) + 1
-            ] = {
-              id: parseInt(lastKey) + 1,
-              description: "",
-              active: false,
-              startDate: tempTimeStamp,
-              endDate: null,
-            };
-          } else {
-            (
-              newData as Record<number, educationReadType | experienceReadType>
-            )[1] = {
-              id: parseInt(lastKey) + 1,
-              description: "",
-              active: false,
-              startDate: tempTimeStamp,
-              endDate: null,
-            };
-          }
+          (newData as Record<string, educationReadType>)[tempkey] = {
+            id: tempkey,
+            description: "",
+            active: false,
+            startDate: null,
+            endDate: null,
+          };
           return newData;
         });
-        return { tempTimeStamp };
+        return { tempkey, previousData };
       },
       onSuccess(id, _, context) {
-        if (id) {
+        if (id && context?.tempkey) {
           setData((prevData) => {
             const newData = { ...prevData };
-            for (const [key, value] of Object.entries(newData)) {
-              if (
-                (value as educationReadType | experienceReadType).startDate ===
-                context?.tempTimeStamp
-              ) {
-                delete (
-                  newData as Record<
-                    number,
-                    educationReadType | experienceReadType
-                  >
-                )[parseInt(key)];
-                (
-                  newData as Record<
-                    number,
-                    educationReadType | experienceReadType
-                  >
-                )[id] = {
-                  id: id,
-                  description: "",
-                  active: false,
-                  startDate: null,
-                  endDate: null,
-                };
-                break;
-              }
-            }
+            delete (newData as Record<string, educationReadType>)[
+              context?.tempkey
+            ];
+            (newData as Record<string, educationReadType>)[id] = {
+              id: id,
+              description: "",
+              active: false,
+              startDate: null,
+              endDate: null,
+            };
             return newData;
           });
         }
       },
-      onError() {
+      onError(_, __, context) {
+        utils.education.getEducations.setData(undefined, context?.previousData);
         toast.error("An error occured while creating", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
@@ -96,29 +67,9 @@ export default function Educations({ isDisabled = true }) {
         utils.education.getEducations.invalidate();
       },
     });
-  const {
-    data: { educations: educations } = {},
-    isLoading: isGetEducationLoading,
-  } = trpc.education.getEducations.useQuery(undefined, {
-    onSuccess({ educations }) {
-      setData(educations.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
-    },
-    onError() {
-      toast.error("An error occured while getting your data", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-      });
-    },
-    enabled: !isDisabled,
-  });
-  const {
-    data: { educations: educationsForUser } = {},
-    isLoading: isGetEducationForUserLoading,
-  } = trpc.education.getEducationsForUser.useQuery(
-    {
-      id: router.query.id as string,
-    },
-    {
-      onSuccess({ educations }) {
+  const { data: educations, isLoading: isGetEducationLoading } =
+    trpc.education.getEducations.useQuery(undefined, {
+      onSuccess(educations) {
         setData(educations.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
       },
       onError() {
@@ -126,9 +77,25 @@ export default function Educations({ isDisabled = true }) {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
       },
-      enabled: isDisabled,
-    }
-  );
+      enabled: !isDisabled,
+    });
+  const { data: educationsForUser, isLoading: isGetEducationForUserLoading } =
+    trpc.education.getEducationsForUser.useQuery(
+      {
+        id: router.query.id as string,
+      },
+      {
+        onSuccess(educations) {
+          setData(educations.reduce((a, v) => ({ ...a, [v.id]: v }), {}));
+        },
+        onError() {
+          toast.error("An error occured while getting your data", {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          });
+        },
+        enabled: isDisabled,
+      }
+    );
   const { mutate: updateEducation } =
     trpc.education.updateEducation.useMutation({
       async onMutate(newItemData) {
@@ -138,9 +105,8 @@ export default function Educations({ isDisabled = true }) {
           const newData = { ...prevData };
           newItemData.startDate = newItemData.startDate;
           newItemData.endDate = newItemData.endDate;
-          (newData as Record<number, educationReadType | experienceReadType>)[
-            newItemData.id
-          ] = newItemData;
+          (newData as Record<string, educationReadType>)[newItemData.id] =
+            newItemData;
           return newData;
         });
         return { previousData };
@@ -162,9 +128,7 @@ export default function Educations({ isDisabled = true }) {
         const previousData = utils.education.getEducations.getData();
         setData((prevData) => {
           const newData = { ...prevData };
-          delete (
-            newData as Record<number, educationReadType | experienceReadType>
-          )[id];
+          delete (newData as Record<string, educationReadType>)[id];
           return newData;
         });
         return { previousData };
@@ -184,7 +148,7 @@ export default function Educations({ isDisabled = true }) {
     educations?.reduce((a, v) => ({ ...a, [v.id]: v }), {}) ||
       educationsForUser?.reduce((a, v) => ({ ...a, [v.id]: v }), {}) ||
       {}
-  ); // use object instead of array to prevent random ordering
+  ); // use object instead of array to easily get the data
 
   if (
     (!isDisabled && isGetEducationLoading) ||
@@ -209,7 +173,6 @@ export default function Educations({ isDisabled = true }) {
   }
   return (
     <Template
-      endpoint={"/educations"}
       title={t("portfolio:educations")}
       isDisabled={isDisabled}
       data={data}

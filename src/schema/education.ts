@@ -8,7 +8,7 @@ export const educationCreateSchema = z.object({
 });
 
 export const educationReadSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   description: z.string().nullable(),
   active: z.boolean().nullable(),
   startDate: z.date().nullable(),
@@ -16,7 +16,7 @@ export const educationReadSchema = z.object({
 });
 
 export const educationUpdateSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   description: z.string().nullable(),
   active: z.boolean().nullable(),
   startDate: z.date().nullable(),
@@ -24,7 +24,7 @@ export const educationUpdateSchema = z.object({
 });
 
 export const educationDeleteSchema = z.object({
-  id: z.number(),
+  id: z.string(),
 });
 
 export const educationReadForUserSchema = z.object({

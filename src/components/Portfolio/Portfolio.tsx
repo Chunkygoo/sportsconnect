@@ -436,7 +436,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                       onChange={(date: Date) =>
                         updateUserInfo({ ...userInfo, birthday: date })
                       }
-                      className="w-full border-0 border-b-2 border-gray-200 pb-2 focus:border-black focus:outline-none focus:ring-0"
+                      className="w-full border-0 border-b-2 border-gray-200 bg-transparent pb-2 focus:border-black focus:outline-none focus:ring-0"
                       wrapperClassName={undefined}
                     />
                   </div>
