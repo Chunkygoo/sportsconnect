@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import SessionReact from "supertokens-auth-react/recipe/session";
 import type { portfolioType } from "../../types/portfolio";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../Common/Spinner";
@@ -63,48 +62,6 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
     },
     onSettled() {
       utils.userInfo.getCurrentUserInfo.invalidate();
-    },
-    // retry: async (failureCount, error) => {
-    //   const refresh = async () => {
-    //     if (
-    //       error.message ===
-    //       "Access token has expired. Please call the refresh API"
-    //     ) {
-    //       if (await SessionReact.attemptRefreshingSession()) {
-    //         console.log("succeeded calling needs-refresh");
-    //         return true;
-    //       } else {
-    //         router.push("/auth/loginsignup");
-    //         return false;
-    //       }
-    //     }
-    //     return false;
-    //   };
-    //   if (await refresh()) {
-    //     return true;
-    //   }
-    //   return false;
-    // },
-    retry: async (failureCount, error) => {
-      const refresh = async () => {
-        if (
-          error.message ===
-          "Access token has expired. Please call the refresh API"
-        ) {
-          if (await SessionReact.attemptRefreshingSession()) {
-            console.log("succeeded calling needs-refresh");
-            return true;
-          } else {
-            router.push("/auth/loginsignup");
-            return false;
-          }
-        }
-        return false;
-      };
-      if (await refresh()) {
-        return true;
-      }
-      return false;
     },
   });
   const [userInfo, setUserInfo] = useState(publicView ? publicUserData : data); // need this for OU
