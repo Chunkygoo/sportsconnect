@@ -15,7 +15,7 @@ export const educationRouter = router({
           (
             await ctx.prisma.userInfo.findUniqueOrThrow({
               where: {
-                id: "1",
+                id: ctx.session?.getUserId(),
               },
               select: {
                 educations: true,
@@ -34,7 +34,7 @@ export const educationRouter = router({
             endDate: input.endDate,
             owner: {
               connect: {
-                id: "1",
+                id: ctx.session?.getUserId(),
               },
             },
           },
@@ -48,7 +48,7 @@ export const educationRouter = router({
     try {
       return await ctx.prisma.education.findMany({
         where: {
-          ownerId: "1",
+          ownerId: ctx.session?.getUserId(),
         },
         orderBy: {
           createdAt: "asc",
@@ -64,7 +64,7 @@ export const educationRouter = router({
       try {
         await ctx.prisma.userInfo.update({
           where: {
-            id: "1",
+            id: ctx.session?.getUserId(),
           },
           data: {
             educations: {

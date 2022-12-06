@@ -12,7 +12,7 @@ datasource db {
 
 model UserInfo {
   id               String           @id
-  email            String           @unique
+  email            String
   name             String?
   wechatId         String?
   preferredName    String?

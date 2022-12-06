@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
   publicUserInfoSchema,
   updateUserInfoSchema,
@@ -7,32 +8,39 @@ import { publicProcedure, router } from "../trpc";
 export const userInfoRouter = router({
   getCurrentUserInfo: publicProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.prisma.userInfo.findUniqueOrThrow({
-        where: {
-          id: "1",
-        },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          wechatId: true,
-          preferredName: true,
-          bio: true,
-          gender: true,
-          contactNumber: true,
-          currentAddress: true,
-          permanentAddress: true,
-          birthday: true,
-          public: true,
-          profilePhoto: {
-            select: {
-              key: true,
+      if (ctx.session) {
+        // if expired, call refresh, if still failed, signout
+        return await ctx.prisma.userInfo.findUniqueOrThrow({
+          where: {
+            id: ctx.session.getUserId(),
+          },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            wechatId: true,
+            preferredName: true,
+            bio: true,
+            gender: true,
+            contactNumber: true,
+            currentAddress: true,
+            permanentAddress: true,
+            birthday: true,
+            public: true,
+            profilePhoto: {
+              select: {
+                key: true,
+              },
             },
           },
-        },
-      });
+        });
+      }
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: (error as Error).message,
+        cause: error,
+      });
     }
   }),
   updateUserInfo: publicProcedure
@@ -41,7 +49,7 @@ export const userInfoRouter = router({
       try {
         await ctx.prisma.userInfo.update({
           where: {
-            id: "1",
+            id: ctx.session?.getUserId(),
           },
           data: {
             name: input.name,

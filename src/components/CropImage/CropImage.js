@@ -90,7 +90,6 @@ export default function CropImage({ setLoading, display, imageKey }) {
       }
       await utils.image.getPreSignedURLForWrite.invalidate();
       const { uploadUrl, key } = data;
-      console.log(imageKey);
       if (imageKey) await deleteS3Object({ key: imageKey }); // delete if exists
       let res = await axios.put(uploadUrl, file); // upload to s3
       if (res.status === 200) {

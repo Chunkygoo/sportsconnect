@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "supertokens_debug_dev": "DEBUG=com.supertokens next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"
@@ -22,6 +23,7 @@
     "axios": "^1.2.0",
     "next": "13.0.2",
     "next-translate": "^1.6.0",
+    "nextjs-cors": "^2.1.2",
     "react": "18.2.0",
     "react-datepicker": "^4.8.0",
     "react-debounce-input": "^3.3.0",
@@ -30,6 +32,8 @@
     "react-image-crop": "^10.0.9",
     "react-toastify": "^9.1.1",
     "superjson": "1.9.1",
+    "supertokens-auth-react": "^0.27.3",
+    "supertokens-node": "^12.1.1",
     "sweetalert": "^2.1.2",
     "uuidv4": "^6.2.13",
     "zod": "^3.18.0"

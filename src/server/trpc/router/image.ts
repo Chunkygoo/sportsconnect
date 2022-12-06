@@ -70,7 +70,6 @@ export const imageRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const s3 = new S3(s3Config);
-        console.log(input.key);
         s3.deleteObject(
           {
             Bucket: env.AWS_S3_BUCKET_NAME,
@@ -93,7 +92,7 @@ export const imageRouter = router({
         // create if not exists, else update
         await ctx.prisma.userInfo.update({
           where: {
-            id: "1",
+            id: ctx.session?.getUserId(),
           },
           data: {
             profilePhoto: {
