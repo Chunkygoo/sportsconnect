@@ -1,4 +1,4 @@
-import ContactUs from "../components/Footer/ContactUs";
+import ContactUs from "../components/Nav/ContactUs";
 
 export default function contactus() {
   return <ContactUs />;

@@ -1,4 +1,5 @@
 import Router from "next/router";
+import { toast } from "react-toastify";
 import EmailVerification from "supertokens-auth-react/recipe/emailverification";
 import SessionReact from "supertokens-auth-react/recipe/session";
 import ThirdPartyEmailPassword, {
@@ -87,6 +88,31 @@ export const frontendConfig = {
         superTokensBranding: {
           display: "none",
         },
+      },
+      getRedirectionURL: async (context) => {
+        if (context.action === "SUCCESS") {
+          if (context.redirectToPath !== undefined) {
+            // we are navigating back to where the user was before they authenticated
+            return context.redirectToPath;
+          }
+          // For Google login, we need a workaround because Router.locale will always be the default upon successful login.
+          // Hence, we use localStorage in _app.js, LanguageDropdown.js, frontendConfig.js and home.js to redirect and set
+          // the right locale
+          if (localStorage.getItem("lang") === "en-US") {
+            toast.success("Welcome back!", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              delay: 500,
+            }); // Without timeout, emailpassword login somehow dismisses the toast upon redirect
+            return "/home"; // must redirect to home.js because that is where router.locale gets updated
+          } else if (localStorage.getItem("lang") === "zh") {
+            toast.success("欢迎！", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+              delay: 500,
+            });
+            return "/zh/home"; // must redirect to home.js because that is where router.locale gets updated
+          }
+        }
+        return undefined;
       },
     }),
   ],
