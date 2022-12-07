@@ -22,7 +22,7 @@ export const imageRouter = router({
         key: z.string().optional(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       try {
         const s3 = new S3(s3Config);
         const getUrl = s3.getSignedUrl("getObject", {
@@ -47,7 +47,7 @@ export const imageRouter = router({
         fileType: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       try {
         const s3 = new S3(s3Config);
         const ex = (decodeURIComponent(input.fileType) as string).split("/")[1];
@@ -76,7 +76,7 @@ export const imageRouter = router({
         key: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       try {
         const s3 = new S3(s3Config);
         s3.deleteObject(

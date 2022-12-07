@@ -208,10 +208,12 @@ export default function CropImage({
                     </span>
                   </div>
                   <div className="flex items-center justify-between rounded-b border-t border-solid border-slate-200 p-3 text-xs sm:text-base">
-                    <div className="mr-1 p-3">{t("portfolio:crop_image")}</div>
-                    <div>
+                    <div className="m-auto mr-1 p-2">
+                      {t("portfolio:crop_image")}
+                    </div>
+                    <div className="mt-1 mb-1">
                       <button
-                        className="mr-4 mr-1 mb-1 rounded bg-emerald-500 px-4 py-1 text-xs font-bold text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600 sm:text-sm"
+                        className="mr-4 rounded bg-emerald-500 px-4 py-1 text-xs font-bold text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600 sm:text-sm"
                         type="button"
                         onClick={() => {
                           reset();
@@ -221,7 +223,7 @@ export default function CropImage({
                         {t("portfolio:cancel")}
                       </button>
                       <button
-                        className="mr-1 mb-1 rounded bg-blue-500 px-4 py-1 text-xs font-bold text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-blue-600 sm:text-sm"
+                        className="mr-1 rounded bg-blue-500 px-4 py-1 text-xs font-bold text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-blue-600 sm:text-sm"
                         type="button"
                         onClick={() => {
                           handleUploadImage();

@@ -13,10 +13,8 @@ const sesConfig = {
 };
 
 export const emailRouter = router({
-  sendEmail: publicProcedure
-    .input(emailSchema)
-    .mutation(async ({ ctx, input }) => {
-      const BODY_HTML = `<html>
+  sendEmail: publicProcedure.input(emailSchema).mutation(async ({ input }) => {
+    const BODY_HTML = `<html>
         <head></head>
         <body>
         <p>Customer name: ${input.name}</p>
@@ -24,7 +22,7 @@ export const emailRouter = router({
         <p>Customer message: ${input.message}</p>
         </body>
         </html>`;
-      const BODY_TEXT = `<html>
+    const BODY_TEXT = `<html>
         <head></head>
         <body>
         <p>Customer name: ${input.name}</p>
@@ -32,41 +30,41 @@ export const emailRouter = router({
         <p>Customer message: ${input.message}</p>
         </body>
         </html>`;
-      const SUBJECT = `Mail from SportsConnect Customer: ${input.email}`;
-      const params = {
-        Source: env.MAIL_FROM,
-        Destination: {
-          ToAddresses: [env.MAIL_TO],
-        },
-        Message: {
-          Body: {
-            Html: {
-              Charset: "UTF-8",
-              Data: BODY_HTML,
-            },
-            Text: {
-              Charset: "UTF-8",
-              Data: BODY_TEXT,
-            },
-          },
-          Subject: {
+    const SUBJECT = `Mail from SportsConnect Customer: ${input.email}`;
+    const params = {
+      Source: env.MAIL_FROM,
+      Destination: {
+        ToAddresses: [env.MAIL_TO],
+      },
+      Message: {
+        Body: {
+          Html: {
             Charset: "UTF-8",
-            Data: SUBJECT,
+            Data: BODY_HTML,
+          },
+          Text: {
+            Charset: "UTF-8",
+            Data: BODY_TEXT,
           },
         },
-      };
-      try {
-        const ses = new SES(sesConfig);
-        const sendEmail = ses.sendEmail(params).promise();
-        sendEmail.then((data) => {
-          console.log(data);
-        });
-      } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: (error as Error).message,
-          cause: error,
-        });
-      }
-    }),
+        Subject: {
+          Charset: "UTF-8",
+          Data: SUBJECT,
+        },
+      },
+    };
+    try {
+      const ses = new SES(sesConfig);
+      const sendEmail = ses.sendEmail(params).promise();
+      sendEmail.then((data) => {
+        console.log(data);
+      });
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: (error as Error).message,
+        cause: error,
+      });
+    }
+  }),
 });
