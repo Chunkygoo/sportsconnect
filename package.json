@@ -33,7 +33,7 @@
     "react-toastify": "^9.1.1",
     "superjson": "1.9.1",
     "supertokens-auth-react": "^0.27.3",
-    "supertokens-node": "^12.1.1",
+    "supertokens-node": "^12.1.2",
     "sweetalert": "^2.1.2",
     "uuidv4": "^6.2.13",
     "zod": "^3.18.0"
@@ -42,6 +42,7 @@
     "@types/autosize": "^4.0.1",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
+    "@types/react-datepicker": "^4.8.0",
     "@types/react-dom": "^18.0.5",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",

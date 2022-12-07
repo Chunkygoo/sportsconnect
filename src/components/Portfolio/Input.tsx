@@ -1,27 +1,34 @@
-import React from 'react';
-import { DebounceInput } from 'react-debounce-input';
+import { DebounceInput } from "react-debounce-input";
+import type { inputType } from "../../types/input";
 
 export default function Input({
+  isDisabled,
   label,
   name,
-  isDisabled,
-  type = 'text',
-  ...rest
-}) {
+  type,
+  value,
+  isTextarea = false,
+  onChange,
+}: inputType) {
   return (
-    <div className="relative z-0 w-full mb-8">
+    <div className={"relative z-0 mb-8 w-full" + (isTextarea ? " h-full" : "")}>
       <DebounceInput
         disabled={isDisabled ? isDisabled : false}
         debounceTimeout={1000}
-        {...rest}
+        value={value || ""}
+        onChange={onChange}
         id={name}
         type={type}
         placeholder=" "
-        className="pt-3 pb-2 block w-full px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
+        element={isTextarea ? "textarea" : undefined}
+        className={
+          "w-full appearance-none border-0 border-b-2 border-gray-200 bg-transparent focus:border-black focus:outline-none focus:ring-0" +
+          (isTextarea ? " block h-full p-1" : " mt-0 block px-0 pt-3 pb-2")
+        }
       />
       <label
         htmlFor={name}
-        className="absolute duration-300 top-3 left-0 -z-1 origin-0 text-gray-500"
+        className="-z-1 origin-0 absolute top-3 left-0 text-gray-500 duration-300"
       >
         {label}
       </label>

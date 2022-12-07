@@ -1,8 +1,10 @@
-export async function canvasPreview(image, canvas, crop) {
-  const ctx = canvas.getContext('2d');
+import type { canvasCropType } from "../../types/canvasCrop";
+
+export async function canvasCrop({ image, canvas, crop }: canvasCropType) {
+  const ctx = canvas.getContext("2d");
 
   if (!ctx) {
-    throw new Error('No 2d context');
+    throw new Error("No 2d context");
   }
 
   const scaleX = image.naturalWidth / image.width;
@@ -18,7 +20,7 @@ export async function canvasPreview(image, canvas, crop) {
   canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
 
   ctx.scale(pixelRatio, pixelRatio);
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = "high";
 
   const cropX = crop.x * scaleX;
   const cropY = crop.y * scaleY;

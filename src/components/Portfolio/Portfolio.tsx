@@ -11,7 +11,6 @@ import YearMonthDayPicker from "../DatePicker/YearMonthDayPicker";
 import Educations from "./Educations";
 import Experiences from "./Experiences";
 import Input from "./Input";
-import Textarea from "./Textarea";
 import Tooltip from "./Tooltip";
 
 const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
@@ -152,19 +151,15 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                     </svg>
                   ) : (
                     <div className="text-md grid place-items-center bg-slate-200  text-blue-600">
-                      {userInfo?.profilePhoto ? (
-                        <CropImage
-                          display={t("portfolio:upload_new_photo")}
-                          setLoading={setLoading}
-                          imageKey={userInfo?.profilePhoto?.key}
-                        />
-                      ) : (
-                        <CropImage
-                          display={t("portfolio:change_profile_photo")}
-                          setLoading={setLoading}
-                          imageKey={userInfo?.profilePhoto?.key}
-                        />
-                      )}
+                      <CropImage
+                        display={
+                          userInfo?.profilePhoto
+                            ? t("portfolio:upload_new_photo")
+                            : t("portfolio:change_profile_photo")
+                        }
+                        setLoading={setLoading}
+                        imageKey={userInfo?.profilePhoto?.key}
+                      />
                     </div>
                   ))}
               </div>
@@ -177,14 +172,11 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                           ? t("portfolio:make_private")
                           : t("portfolio:make_public")
                       }
-                      extraInformation={
+                      initialMessage={
                         userInfo.public
                           ? t("portfolio:make_private_description")
                           : t("portfolio:make_public_description")
                       }
-                      initialMessage={undefined}
-                      transitionedMessage={undefined}
-                      hoverColor={undefined}
                     />
                   </div>
                   <div>
@@ -268,7 +260,6 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                         initialMessage={t("portfolio:copy")}
                         transitionedMessage={t("portfolio:copied")}
                         hoverColor="text-green-500"
-                        extraInformation={undefined}
                       />
                     </div>
                   )}
@@ -290,7 +281,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                 />
               </h1>
               <div className="h-[20vh] max-h-[10rem] w-full leading-6 md:h-full md:max-h-[12rem]">
-                <Textarea
+                <Input
                   isDisabled={isDisabled}
                   label={t("portfolio:bio")}
                   name="Bio"
@@ -299,6 +290,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     updateUserInfo({ ...userInfo, bio: e.target.value })
                   }
+                  isTextarea={true}
                 />
               </div>
             </div>
@@ -337,7 +329,6 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         updateUserInfo({ ...userInfo, name: e.target.value })
                       }
-                      // onChange={(e) => console.log(e)}
                     />
                   </div>
                   <div className="py-2 md:px-4">
@@ -420,6 +411,9 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                       name="Email"
                       type="email"
                       value={userInfo.email}
+                      onChange={() => {
+                        return;
+                      }}
                     />
                   </div>
 
@@ -438,7 +432,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                         updateUserInfo({ ...userInfo, birthday: date })
                       }
                       className="w-full border-0 border-b-2 border-gray-200 bg-transparent pb-2 focus:border-black focus:outline-none focus:ring-0"
-                      wrapperClassName={undefined}
+                      wrapperClassName=""
                     />
                   </div>
                 </div>

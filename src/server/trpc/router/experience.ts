@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
   experienceCreateSchema,
   experienceDeleteSchema,
@@ -41,7 +42,11 @@ export const experienceRouter = router({
         });
         return res.id;
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getExperiences: publicProcedure.query(async ({ ctx }) => {
@@ -55,7 +60,11 @@ export const experienceRouter = router({
         },
       });
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: (error as Error).message,
+        cause: error,
+      });
     }
   }),
   updateExperience: publicProcedure
@@ -83,7 +92,11 @@ export const experienceRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   deleteExperience: publicProcedure
@@ -96,7 +109,11 @@ export const experienceRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getExperiencesForUser: publicProcedure
@@ -112,7 +129,11 @@ export const experienceRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
 });

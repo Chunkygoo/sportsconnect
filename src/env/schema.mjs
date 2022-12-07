@@ -6,8 +6,10 @@ import { z } from "zod";
  * This way you can ensure the app isn't built with invalid env vars.
  */
 export const serverSchema = z.object({
-  DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
+  DATABASE_URL: z.string().url(),
+  MAIL_FROM: z.string(),
+  MAIL_TO: z.string(),
   AWS_REGION_: z.string(),
   AWS_S3_BUCKET_NAME: z.string(),
   AWS_ACCESS_KEY_ID_: z.string(),
@@ -18,6 +20,7 @@ export const serverSchema = z.object({
   SUPERTOKENS_DASHBOARD_API_KEY: z.string(),
   SUPERTOKENS_GOOGLE_CLIENT_ID: z.string(),
   SUPERTOKENS_GOOGLE_CLIENT_SECRET: z.string(),
+  SUPERTOKENS_EMAIL_VERIFICATION: z.enum(["OPTIONAL", "REQUIRED"]),
 });
 
 /**

@@ -1,5 +1,7 @@
+import { TRPCError } from "@trpc/server";
 import { deleteUser } from "supertokens-node";
 import Dashboard from "supertokens-node/recipe/dashboard";
+import EmailVerification from "supertokens-node/recipe/emailverification";
 import SessionNode from "supertokens-node/recipe/session";
 import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemailpassword";
 import type { TypeInput } from "supertokens-node/types";
@@ -39,7 +41,11 @@ export const backendConfig = (): TypeInput => {
                     });
                   } catch (error) {
                     await deleteUser(res.user.id);
-                    throw new Error((error as Error).message);
+                    throw new TRPCError({
+                      code: "BAD_REQUEST",
+                      message: (error as Error).message,
+                      cause: error,
+                    });
                   }
                 }
                 return res;
@@ -59,7 +65,11 @@ export const backendConfig = (): TypeInput => {
                     });
                   } catch (error) {
                     await deleteUser(res.user.id);
-                    throw new Error((error as Error).message);
+                    throw new TRPCError({
+                      code: "BAD_REQUEST",
+                      message: (error as Error).message,
+                      cause: error,
+                    });
                   }
                 }
                 return res;
@@ -76,6 +86,7 @@ export const backendConfig = (): TypeInput => {
         ],
       }),
       SessionNode.init(),
+      EmailVerification.init({ mode: env.SUPERTOKENS_EMAIL_VERIFICATION }),
       Dashboard.init({
         apiKey: env.SUPERTOKENS_DASHBOARD_API_KEY,
       }),

@@ -16,26 +16,6 @@ if (typeof window !== "undefined") {
 }
 
 const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
-  // const router = useRouter();
-
-  // for SuperTokens getServerSideProps
-  // useEffect(() => {
-  //   const refresh = async () => {
-  //     if (pageProps.fromSupertokens === "needs-refresh") {
-  //       console.log("calling needs-refresh");
-  //       if (await SessionReact.attemptRefreshingSession()) {
-  //         console.log("succeeded calling needs-refresh");
-  //         router.replace(router.asPath);
-  //       } else {
-  //         console.log("failed calling needs-refresh");
-  //         router.push("/auth/loginsignup");
-  //       }
-  //     }
-  //   };
-  //   refresh();
-  // }, [pageProps.fromSupertokens, router]);
-  // End for SuperTokens getServerSideProps
-
   if (pageProps.fromSupertokens === "needs-refresh") {
     return (
       <div className="flex h-screen">

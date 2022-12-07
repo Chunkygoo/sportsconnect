@@ -1,5 +1,6 @@
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import type { yearMonthDayPickerType } from "../../types/yearMonthDayPicker";
 
 export default function YearMonthDayPicker({
   selected,
@@ -7,9 +8,9 @@ export default function YearMonthDayPicker({
   className,
   wrapperClassName,
   isDisabled,
-}) {
-  let range = (from, to) => {
-    let size = to - from + 1;
+}: yearMonthDayPickerType) {
+  const range = (from: number, to: number) => {
+    const size = to - from + 1;
     return [...Array(size).keys()].map((i) => from + i);
   };
   const years = range(1920, new Date().getFullYear());
@@ -35,16 +36,11 @@ export default function YearMonthDayPicker({
       className={className}
       wrapperClassName={wrapperClassName}
       renderCustomHeader={({ date, changeYear, changeMonth }) => (
-        <div
-          style={{
-            margin: 10,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+        <div className="m-2 flex justify-center ">
           <select
+            aria-label="years"
             value={date.getFullYear()}
-            onChange={({ target: { value } }) => changeYear(value)}
+            onChange={({ target: { value } }) => changeYear(Number(value))}
           >
             {years.map((option) => (
               <option key={option} value={option}>
@@ -54,6 +50,7 @@ export default function YearMonthDayPicker({
           </select>
 
           <select
+            aria-label="months"
             value={months[date.getMonth()]}
             onChange={({ target: { value } }) =>
               changeMonth(months.indexOf(value))

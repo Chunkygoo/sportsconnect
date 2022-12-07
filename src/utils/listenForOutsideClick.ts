@@ -1,8 +1,8 @@
 export default function listenForOutsideClick(
-  listening,
-  setListening,
-  ref,
-  clickedOutsideCallback
+  listening: boolean,
+  setListening: React.Dispatch<React.SetStateAction<boolean>>,
+  ref: any,
+  clickedOutsideCallback: () => void
 ) {
   return () => {
     if (listening) return;

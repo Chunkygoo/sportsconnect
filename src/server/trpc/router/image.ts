@@ -1,4 +1,5 @@
 // import S3FileUpload from "react-s3";
+import { TRPCError } from "@trpc/server";
 import S3 from "aws-sdk/clients/s3";
 import { randomUUID } from "crypto";
 import { z } from "zod";
@@ -33,7 +34,11 @@ export const imageRouter = router({
           getUrl: getUrl,
         };
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getPreSignedURLForWrite: publicProcedure
@@ -58,7 +63,11 @@ export const imageRouter = router({
           key: key,
         };
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   deleteS3Object: publicProcedure
@@ -82,7 +91,11 @@ export const imageRouter = router({
           }
         );
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   updateImageMetaData: publicProcedure
@@ -108,7 +121,11 @@ export const imageRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
 });

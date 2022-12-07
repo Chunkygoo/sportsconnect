@@ -1,56 +1,75 @@
 import axios from "axios";
 import useTranslation from "next-translate/useTranslation";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { AiOutlineClose } from "react-icons/ai";
-import ReactCrop from "react-image-crop";
+import ReactCrop, { type PercentCrop, type PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { toast } from "react-toastify";
+import type { cropImageType } from "../../types/cropImage";
 import { trpc } from "../../utils/trpc";
-import { canvasPreview } from "./canvasPreview";
+import { canvasCrop } from "./canvasCrop";
 
-export default function CropImage({ setLoading, display, imageKey }) {
+export default function CropImage({
+  setLoading,
+  display,
+  imageKey,
+}: cropImageType) {
   const { t } = useTranslation();
   const [imgSrc, setImgSrc] = useState("");
-  const [imageName, setImageName] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const imgRef = useRef(null);
-  const previewCanvasRef = useRef(null);
-  const [crop, setCrop] = useState(null);
-  const [completedCrop, setCompletedCrop] = useState(null);
-  const [error, setError] = useState(null);
-  const [imageType, setImageType] = useState("");
+  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [crop, setCrop] = useState<PercentCrop | undefined>(undefined);
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const utils = trpc.useContext();
 
   useEffect(() => {
     if (
+      completedCrop &&
       completedCrop?.width &&
       completedCrop?.height &&
       imgRef.current &&
       previewCanvasRef.current
     ) {
-      canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop);
+      canvasCrop({
+        image: imgRef.current,
+        canvas: previewCanvasRef.current,
+        crop: completedCrop,
+      });
     }
   }, [completedCrop]);
 
-  let reset = () => {
+  const reset = () => {
     setImgSrc("");
-    setImageName("");
     imgRef.current = null;
     previewCanvasRef.current = null;
-    setCrop(null);
+    setCrop(undefined);
     setCompletedCrop(null);
-    setError(null);
-    setImageType("");
+    setError("");
   };
 
-  const { data } = trpc.image.getPreSignedURLForWrite.useQuery(
-    { fileType: encodeURIComponent(imageType) },
+  const { refetch: uploadImage } = trpc.image.getPreSignedURLForWrite.useQuery(
+    { fileType: encodeURIComponent(image?.type || "") },
     {
+      async onSuccess({ uploadUrl, key }) {
+        setLoading(true);
+        if (imageKey) await deleteS3Object({ key: imageKey }); // delete if exists
+        const res = await axios.put(uploadUrl, image); // upload to s3
+        if (res.status === 200) {
+          await updateImageMetaData({
+            key: key,
+          });
+        }
+        setLoading(false);
+      },
       onError() {
         toast.error("An error occured while uploading your image", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
       },
+      enabled: false,
     }
   );
 
@@ -79,61 +98,44 @@ export default function CropImage({ setLoading, display, imageKey }) {
     }
   );
 
-  let sendProfilePhoto = async () => {
-    let uploadBlob = async (blob) => {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("file", blob, imageName);
-      const file = formData.get("file");
-      if (!file) {
-        return null;
-      }
-      await utils.image.getPreSignedURLForWrite.invalidate();
-      const { uploadUrl, key } = data;
-      if (imageKey) await deleteS3Object({ key: imageKey }); // delete if exists
-      let res = await axios.put(uploadUrl, file); // upload to s3
-      if (res.status === 200) {
-        await updateImageMetaData({
-          key: key,
+  const handleUploadImage = async () => {
+    // if there is a cropped image, we use that
+    if (completedCrop && previewCanvasRef.current) {
+      previewCanvasRef.current.toBlob((blob: Blob | null) => {
+        if (!blob || !image) return;
+        const _image = new File([blob], image.name, {
+          type: image.type,
         });
-      }
-      setLoading(false);
-    };
-    if (completedCrop) {
-      previewCanvasRef.current.toBlob((blob) => {
-        uploadBlob(blob);
-      }, imageType);
-    } else {
-      let blob = await fetch(imgSrc).then((r) => r.blob());
-      uploadBlob(blob);
+        setImage(_image);
+      }, image?.type);
     }
+    uploadImage();
   };
 
-  let onSelectFile = (e) => {
-    setImgSrc(null);
+  const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
+    setImgSrc("");
     setError("");
-    if (e.target.files && e.target.files.length > 0) {
-      if (!e.target.files[0].name.match(/\.(jpg|jpeg|png|gif)$/)) {
-        setError("Select a valid image file");
-        return;
-      }
-      if (e.target.files[0].size > 5000000) {
-        // file size greater than 5mb
-        setError("File size must be < 5 Mb");
-        return;
-      }
-      setCrop(undefined); // Makes crop preview update between images.
-      const reader = new FileReader();
-      reader.addEventListener("load", () =>
-        setImgSrc(reader.result.toString() || "")
-      );
-      reader.readAsDataURL(e.target.files[0]);
-      setImageName(e.target.files[0].name);
-      setImageType(e.target.files[0].type);
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+    if (!file.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+      setError("Select a valid image file");
+      return;
     }
+    if (file.size > 5000000) {
+      setError("File size must be < 5 Mb");
+      return;
+    }
+    // Makes crop preview update between images.
+    setCrop(undefined);
+    const reader = new FileReader();
+    reader.addEventListener("load", () =>
+      setImgSrc(reader?.result?.toString() || "")
+    );
+    reader.readAsDataURL(e.target.files[0]);
+    setImage(e.target.files[0]);
   };
 
-  let description = (
+  const description = (
     <div>
       {error && (
         <span className="text-md flex justify-between text-red-700 ">
@@ -146,6 +148,7 @@ export default function CropImage({ setLoading, display, imageKey }) {
       )}
       {!(completedCrop || imgSrc) && (
         <input
+          aria-label="file input"
           className="mb-2 block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none"
           type="file"
           accept="image/*"
@@ -221,7 +224,7 @@ export default function CropImage({ setLoading, display, imageKey }) {
                         className="mr-1 mb-1 rounded bg-blue-500 px-4 py-1 text-xs font-bold text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-blue-600 sm:text-sm"
                         type="button"
                         onClick={() => {
-                          sendProfilePhoto();
+                          handleUploadImage();
                           setShowModal(false);
                         }}
                         disabled={!completedCrop && !imgSrc}

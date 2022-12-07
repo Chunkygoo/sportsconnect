@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
   educationCreateSchema,
   educationDeleteSchema,
@@ -41,7 +42,11 @@ export const educationRouter = router({
         });
         return res.id;
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getEducations: publicProcedure.query(async ({ ctx }) => {
@@ -55,7 +60,11 @@ export const educationRouter = router({
         },
       });
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: (error as Error).message,
+        cause: error,
+      });
     }
   }),
   updateEducation: publicProcedure
@@ -83,7 +92,11 @@ export const educationRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   deleteEducation: publicProcedure
@@ -96,7 +109,11 @@ export const educationRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getEducationsForUser: publicProcedure
@@ -112,7 +129,11 @@ export const educationRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
 });

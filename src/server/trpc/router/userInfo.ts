@@ -8,33 +8,30 @@ import { publicProcedure, router } from "../trpc";
 export const userInfoRouter = router({
   getCurrentUserInfo: publicProcedure.query(async ({ ctx }) => {
     try {
-      if (ctx.session) {
-        // if expired, call refresh, if still failed, signout
-        return await ctx.prisma.userInfo.findUniqueOrThrow({
-          where: {
-            id: ctx.session.getUserId(),
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            wechatId: true,
-            preferredName: true,
-            bio: true,
-            gender: true,
-            contactNumber: true,
-            currentAddress: true,
-            permanentAddress: true,
-            birthday: true,
-            public: true,
-            profilePhoto: {
-              select: {
-                key: true,
-              },
+      return await ctx.prisma.userInfo.findUniqueOrThrow({
+        where: {
+          id: ctx.session?.getUserId(),
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          wechatId: true,
+          preferredName: true,
+          bio: true,
+          gender: true,
+          contactNumber: true,
+          currentAddress: true,
+          permanentAddress: true,
+          birthday: true,
+          public: true,
+          profilePhoto: {
+            select: {
+              key: true,
             },
           },
-        });
-      }
+        },
+      });
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -65,7 +62,11 @@ export const userInfoRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
   getPublicUserInfo: publicProcedure
@@ -97,7 +98,11 @@ export const userInfoRouter = router({
           },
         });
       } catch (error) {
-        throw new Error((error as Error).message);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: (error as Error).message,
+          cause: error,
+        });
       }
     }),
 });
