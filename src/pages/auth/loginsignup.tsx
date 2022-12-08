@@ -1,3 +1,5 @@
+import type { GetStaticProps } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
 import dynamic from "next/dynamic";
 
 // const IndexNoSSR = dynamic(new Promise((res) => res(Index)), {
@@ -13,4 +15,13 @@ const IndexNoSSR = dynamic(
 
 export default function loginsignup() {
   return <IndexNoSSR />;
+}
+
+export async function getStaticProps(staticProps: GetStaticProps) {
+  return {
+    props: await loadNamespaces({
+      ...staticProps,
+      pathname: "/auth/loginsignup",
+    }),
+  };
 }

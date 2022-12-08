@@ -11,5 +11,6 @@
     "/universities": ["universities"],
     "/myuniversities": ["universities"],
     "/auth/loginsignup": ["login", "signup"]
-  }
+  },
+  "loader": false
 }

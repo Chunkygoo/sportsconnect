@@ -1,5 +1,5 @@
 import Error from "../components/Next/Error";
 
-export default function xrror() {
+export default function error() {
   return <Error />;
 }

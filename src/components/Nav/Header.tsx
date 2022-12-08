@@ -1,15 +1,24 @@
+import useTranslation from "next-translate/useTranslation";
+import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
-import type { headerType } from "../../types/header";
+import { toast } from "react-toastify";
+import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 
 import HeaderNavLarge from "./HeaderNavLarge";
 import HeaderNavSmall from "./HeaderNavSmall";
 import Home from "./Home";
 
-export default function Header({ logOutHelper }: headerType) {
+export default function Header() {
+  const { t } = useTranslation();
   const [loggingOut, setLoggingOut] = useState(false);
+  const router = useRouter();
   const handleLogout = async () => {
     setLoggingOut(true);
-    await logOutHelper();
+    await signOut();
+    toast.success(t("header:logged_out") as string, {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    router.push("/home");
     setLoggingOut(false);
   };
   return (

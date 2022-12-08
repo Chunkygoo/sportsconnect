@@ -22,7 +22,7 @@
     "aws-sdk": "^2.1267.0",
     "axios": "^1.2.0",
     "next": "13.0.2",
-    "next-translate": "^1.6.0",
+    "next-translate": "1.6.0",
     "nextjs-cors": "^2.1.2",
     "react": "18.2.0",
     "react-datepicker": "^4.8.0",

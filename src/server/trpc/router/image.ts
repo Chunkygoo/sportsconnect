@@ -26,7 +26,7 @@ export const imageRouter = router({
       try {
         const s3 = new S3(s3Config);
         const getUrl = s3.getSignedUrl("getObject", {
-          Bucket: env.AWS_S3_BUCKET_NAME,
+          Bucket: env.AWS_S3_BUCKET_NAME_,
           Key: input.key,
           Expires: 900, // 15 mins
         });
@@ -53,7 +53,7 @@ export const imageRouter = router({
         const ex = (decodeURIComponent(input.fileType) as string).split("/")[1];
         const key = `${randomUUID()}.${ex}`;
         const uploadUrl = s3.getSignedUrl("putObject", {
-          Bucket: env.AWS_S3_BUCKET_NAME,
+          Bucket: env.AWS_S3_BUCKET_NAME_,
           Key: key,
           Expires: 60,
           ContentType: `image/${ex}`,
@@ -81,7 +81,7 @@ export const imageRouter = router({
         const s3 = new S3(s3Config);
         s3.deleteObject(
           {
-            Bucket: env.AWS_S3_BUCKET_NAME,
+            Bucket: env.AWS_S3_BUCKET_NAME_,
             Key: input.key,
           },
           () => {

@@ -15,10 +15,11 @@ export default function HeaderNavLarge({
   const session = useSessionContext();
   const router = useRouter();
   const urlPath = router.asPath;
-  if (session.loading) {
-    return null;
-  }
-  const { doesSessionExist } = session;
+
+  const loading = session.loading;
+  const loadedNotAuth = !session.loading && !session.doesSessionExist;
+  // const loadedAuth = !session.loading && session.doesSessionExist;
+
   return (
     <ul className="DESKTOP-MENU hidden space-x-8 lg:flex">
       <li>
@@ -70,7 +71,7 @@ export default function HeaderNavLarge({
           </span>
         </Link>
       </li>
-      {!doesSessionExist ? (
+      {loading || loadedNotAuth ? (
         <Fragment>
           <li>
             <Link

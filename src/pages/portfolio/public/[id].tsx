@@ -3,6 +3,7 @@ import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
 import superjson from "superjson";
 import Portfolio from "../../../components/Portfolio/Portfolio";
 import { createContextInner } from "../../../server/trpc/context";
@@ -31,10 +32,15 @@ export async function getServerSideProps(
   });
   const id = context.params?.id as string;
   await ssg.userInfo.getPublicUserInfo.prefetch({ id });
+  const locales = await loadNamespaces({
+    ...context,
+    pathname: "/portfolio/public/[id]",
+  });
   return {
     props: {
       trpcState: ssg.dehydrate(),
       id,
+      locales,
     },
   };
 }

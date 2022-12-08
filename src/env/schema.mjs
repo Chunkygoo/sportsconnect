@@ -11,7 +11,7 @@ export const serverSchema = z.object({
   MAIL_FROM: z.string(),
   MAIL_TO: z.string(),
   AWS_REGION_: z.string(),
-  AWS_S3_BUCKET_NAME: z.string(),
+  AWS_S3_BUCKET_NAME_: z.string(),
   AWS_ACCESS_KEY_ID_: z.string(),
   AWS_SECRET_ACCESS_KEY_: z.string(),
   APP_URL: z.string(),

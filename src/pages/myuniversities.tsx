@@ -1,8 +1,16 @@
-import React from "react";
+import type { GetStaticProps } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
 // import UniversitiesGallery from '../components/Universities/UniversitiesGallery';
-import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import {
+  SessionAuth,
+  useSessionContext,
+} from "supertokens-auth-react/recipe/session";
 
-export default function myuniversities() {
+export default function MyUniversities() {
+  const { loading } = useSessionContext();
+  if (loading) {
+    return null;
+  }
   return (
     <div className="max-h-screen-xl mx-auto min-h-[80vh] max-w-screen-xl">
       <SessionAuth>
@@ -43,3 +51,12 @@ export default function myuniversities() {
 //     }
 //   }
 // }
+
+export async function getStaticProps(staticProps: GetStaticProps) {
+  return {
+    props: await loadNamespaces({
+      ...staticProps,
+      pathname: "/myuniversities",
+    }),
+  };
+}

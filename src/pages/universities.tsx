@@ -1,7 +1,9 @@
-import React from "react";
+import type { GetStaticProps } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
 // import UniversitiesGallery from '../components/Universities/UniversitiesGallery';
 
-export default function universities({ _res }) {
+// export default function universities({ _res }) {
+export default function universities() {
   return (
     <div className="max-h-screen-xl mx-auto min-h-[80vh] max-w-screen-xl">
       {/* <UniversitiesGallery _res={_res} /> */}
@@ -26,3 +28,11 @@ export default function universities({ _res }) {
 //     };
 //   }
 // }
+export async function getStaticProps(staticProps: GetStaticProps) {
+  return {
+    props: await loadNamespaces({
+      ...staticProps,
+      pathname: "/universities",
+    }),
+  };
+}

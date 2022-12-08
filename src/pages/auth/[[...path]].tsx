@@ -17,9 +17,10 @@ const SuperTokensComponentNoSSR = dynamic(
 
 export default function Auth() {
   const router = useRouter();
-  // if the user visits a page that is not handled by us
-  // (like /auth/asdjklnogjk), then we redirect them back to the /auth/loginsignup page.
+
   useEffect(() => {
+    // if the user visits a page that is not handled by us
+    // (like /auth/asdjklnogjk), then we redirect them back to the /auth/loginsignup page.
     if (SuperTokens.canHandleRoute() === false) {
       router.push("/auth/loginsignup");
     }
@@ -32,4 +33,15 @@ export default function Auth() {
       </div>
     </div>
   );
+}
+
+import type { GetStaticProps } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
+export async function getInitialProps(staticProps: GetStaticProps) {
+  return {
+    props: await loadNamespaces({
+      ...staticProps,
+      pathname: "/auth/[[...path]]",
+    }),
+  };
 }
