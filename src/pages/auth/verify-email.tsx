@@ -3,9 +3,9 @@ import loadNamespaces from "next-translate/loadNamespaces";
 import dynamic from "next/dynamic";
 import useSessionLoading from "../../hooks/useSessionLoading";
 
-const ResetPasswordUsingTokenNoSSR = dynamic(
-  import("supertokens-auth-react/recipe/thirdpartyemailpassword").then(
-    (module) => module.ResetPasswordUsingToken
+const EmailVerificationNoSSR = dynamic(
+  import("supertokens-auth-react/recipe/emailverification").then(
+    (module) => module.EmailVerification
   ),
   {
     ssr: false,
@@ -20,7 +20,7 @@ export default function Resetpassword() {
   return (
     <div className="flex min-h-[80vh]">
       <div className="m-auto">
-        <ResetPasswordUsingTokenNoSSR />
+        <EmailVerificationNoSSR />
       </div>
     </div>
   );

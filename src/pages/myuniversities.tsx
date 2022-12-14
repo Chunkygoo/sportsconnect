@@ -1,23 +1,15 @@
 import type { GetStaticProps } from "next";
 import loadNamespaces from "next-translate/loadNamespaces";
-// import UniversitiesGallery from '../components/Universities/UniversitiesGallery';
-import {
-  SessionAuth,
-  useSessionContext,
-} from "supertokens-auth-react/recipe/session";
+import SessionAuth from "../components/Auth/SessionAuth";
+import UniversitiesGallery from "../components/Universities/UniversitiesGallery";
 
 export default function MyUniversities() {
-  const { loading } = useSessionContext();
-  if (loading) {
-    return null;
-  }
   return (
-    <div className="max-h-screen-xl mx-auto min-h-[80vh] max-w-screen-xl">
-      <SessionAuth>
-        {/* <UniversitiesGallery /> */}
-        <div>myuni</div>
-      </SessionAuth>
-    </div>
+    <SessionAuth>
+      <div className="max-h-screen-xl mx-auto min-h-[80vh] max-w-screen-xl">
+        <UniversitiesGallery />
+      </div>
+    </SessionAuth>
   );
 }
 

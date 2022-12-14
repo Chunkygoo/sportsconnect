@@ -21,10 +21,8 @@ export default function LanguageDropdown({
     <div ref={divRef} className="relative inline-block text-left">
       <div>
         <span
-          // type="button"
           className="block rounded px-4 text-gray-700 focus:outline-0 lg:bg-transparent lg:p-0"
           id="menu-button"
-          // aria-expanded="true"
           aria-haspopup="true"
           onClick={() => setShowLang(!showLang)}
         >
@@ -36,9 +34,6 @@ export default function LanguageDropdown({
           "absolute mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:right-0 " +
           (showLang ? "" : "hidden")
         }
-        // role="menu"
-        // aria-orientation="vertical"
-        // aria-labelledby="menu-button"
       >
         <div className="py-1" role="none">
           {router.locales?.map((locale) => (

@@ -32,7 +32,7 @@ model UserInfo {
 }
 
 model Experience {
-  id          String       @id @default(cuid())
+  id          String    @id @default(cuid())
   description String?
   active      Boolean?  @default(false)
   startDate   DateTime? @db.Date
@@ -43,7 +43,7 @@ model Experience {
 }
 
 model Education {
-  id          String       @id @default(cuid())
+  id          String    @id @default(cuid())
   description String?
   active      Boolean?  @default(false)
   startDate   DateTime? @db.Date
@@ -54,14 +54,14 @@ model Education {
 }
 
 model ProfilePhoto {
-  id        String       @id @default(cuid())
-  key       String
-  userInfo  UserInfo @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
-  userInfoId String  @unique
+  id         String   @id @default(cuid())
+  key        String
+  userInfo   UserInfo @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
+  userInfoId String   @unique
 }
 
 model University {
-  id         String       @id @default(cuid())
+  id         String           @id @default(cuid())
   name       String
   city       String
   state      String
@@ -69,6 +69,7 @@ model University {
   division   String
   category   String
   region     String
+  link       String
   createdAt  DateTime         @default(now())
   userInfo   UserInfoOnUnis[]
 }
@@ -78,7 +79,7 @@ model UserInfoOnUnis {
   userInfoId   String
   university   University @relation(fields: [universityId], references: [id], onDelete: Cascade)
   universityId String
-  
+
   @@id([userInfoId, universityId])
 }
 

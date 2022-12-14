@@ -14,11 +14,11 @@ export default function Header() {
   const router = useRouter();
   const handleLogout = async () => {
     setLoggingOut(true);
+    router.push("/home"); // comes before signOut so that if we are on a "SessionAuth-ed" page, we won't see multiple redirects
     await signOut();
     toast.success(t("header:logged_out") as string, {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
-    router.push("/home");
     setLoggingOut(false);
   };
   return (

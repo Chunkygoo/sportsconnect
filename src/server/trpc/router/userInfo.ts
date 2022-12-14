@@ -3,10 +3,10 @@ import {
   publicUserInfoSchema,
   updateUserInfoSchema,
 } from "../../../schema/userInfo";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userInfoRouter = router({
-  getCurrentUserInfo: publicProcedure.query(async ({ ctx }) => {
+  getCurrentUserInfo: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.userInfo.findUniqueOrThrow({
         where: {
@@ -40,7 +40,7 @@ export const userInfoRouter = router({
       });
     }
   }),
-  updateUserInfo: publicProcedure
+  updateUserInfo: protectedProcedure
     .input(updateUserInfoSchema)
     .mutation(async ({ ctx, input }) => {
       try {

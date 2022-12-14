@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { env } from "../../../env/server.mjs";
 import { uploadImageSchema } from "../../../schema/profilePhoto";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 const s3Config = {
   apiVersion: "latest",
@@ -16,7 +16,7 @@ const s3Config = {
 };
 
 export const imageRouter = router({
-  getPreSignedURLForRead: publicProcedure
+  getPreSignedURLForRead: protectedProcedure
     .input(
       z.object({
         key: z.string().optional(),
@@ -41,7 +41,7 @@ export const imageRouter = router({
         });
       }
     }),
-  getPreSignedURLForWrite: publicProcedure
+  getPreSignedURLForWrite: protectedProcedure
     .input(
       z.object({
         fileType: z.string(),
@@ -70,7 +70,7 @@ export const imageRouter = router({
         });
       }
     }),
-  deleteS3Object: publicProcedure
+  deleteS3Object: protectedProcedure
     .input(
       z.object({
         key: z.string(),
@@ -98,7 +98,7 @@ export const imageRouter = router({
         });
       }
     }),
-  updateImageMetaData: publicProcedure
+  updateImageMetaData: protectedProcedure
     .input(uploadImageSchema)
     .mutation(async ({ ctx, input }) => {
       try {

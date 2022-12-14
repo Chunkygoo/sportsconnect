@@ -40,7 +40,7 @@ export async function getServerSideProps(
     props: {
       trpcState: ssg.dehydrate(),
       id,
-      locales,
+      ...locales,
     },
   };
 }

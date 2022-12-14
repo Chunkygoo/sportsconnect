@@ -4,6 +4,7 @@ import { emailRouter } from "./email";
 import { experienceRouter } from "./experience";
 import { healthRouter } from "./health";
 import { imageRouter } from "./image";
+import { universityRouter } from "./universities";
 import { userInfoRouter } from "./userInfo";
 
 export const appRouter = router({
@@ -13,6 +14,7 @@ export const appRouter = router({
   experience: experienceRouter,
   email: emailRouter,
   health: healthRouter,
+  university: universityRouter,
 });
 
 // export type definition of API

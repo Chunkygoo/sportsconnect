@@ -1,9 +1,10 @@
 import type { AppProps } from "next/app";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import SuperTokensReact from "supertokens-auth-react";
 import { frontendConfig } from "../config/frontendConfig";
 
 import appWithI18n from "next-translate/appWithI18n";
+import { useRouter } from "next/router";
 import i18nConfig from "../../i18n.mjs";
 import MyHead from "../components/Meta/MyHead";
 import Layout from "../components/Shared/Layout";
@@ -16,6 +17,24 @@ if (typeof window !== "undefined") {
 }
 
 const MyApp: any = ({ Component, pageProps }: AppProps) => {
+  const router = useRouter();
+  useEffect(() => {
+    switch (router.locale) {
+      case "en-US":
+        SuperTokensReact.changeLanguage("en");
+        break;
+      case "zh":
+        SuperTokensReact.changeLanguage("zh");
+        break;
+      default:
+        SuperTokensReact.changeLanguage("en");
+    }
+  }, [router.locale]);
+
+  if (router.asPath.includes("/auth/callback/google")) {
+    // for Google login redirect
+    return <Component {...pageProps} />;
+  }
   return (
     <Fragment>
       <MyHead />

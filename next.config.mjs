@@ -12,8 +12,17 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["sportsconnect-profilephotos.s3.amazonaws.com"],
+    // domains: ["sportsconnect-profilephotos.s3.amazonaws.com"],
     unoptimized: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
+    ];
   },
   ...nextTranslate(),
 };

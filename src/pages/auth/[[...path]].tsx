@@ -1,12 +1,9 @@
+import type { GetServerSideProps } from "next";
+import loadNamespaces from "next-translate/loadNamespaces";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import SuperTokens from "supertokens-auth-react";
-
-// const SuperTokensComponentNoSSR = dynamic(
-//   new Promise((res) => res(SuperTokens.getRoutingComponent)),
-//   { ssr: false }
-// );
+import SuperTokensReact from "supertokens-auth-react";
 
 const SuperTokensComponentNoSSR = dynamic(
   import("supertokens-auth-react").then((module) => module.getRoutingComponent),
@@ -21,7 +18,7 @@ export default function Auth() {
   useEffect(() => {
     // if the user visits a page that is not handled by us
     // (like /auth/asdjklnogjk), then we redirect them back to the /auth/loginsignup page.
-    if (SuperTokens.canHandleRoute() === false) {
+    if (!SuperTokensReact.canHandleRoute()) {
       router.push("/auth/loginsignup");
     }
   }, [router]);
@@ -35,13 +32,11 @@ export default function Auth() {
   );
 }
 
-import type { GetStaticProps } from "next";
-import loadNamespaces from "next-translate/loadNamespaces";
-export async function getInitialProps(staticProps: GetStaticProps) {
+export async function getServerSideProps(serverSideProps: GetServerSideProps) {
   return {
     props: await loadNamespaces({
-      ...staticProps,
-      pathname: "/auth/[[...path]]",
+      ...serverSideProps,
+      pathname: "*",
     }),
   };
 }

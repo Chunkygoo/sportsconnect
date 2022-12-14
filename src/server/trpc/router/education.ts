@@ -5,10 +5,10 @@ import {
   educationReadForUserSchema,
   educationUpdateSchema,
 } from "../../../schema/education";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const educationRouter = router({
-  createEducation: publicProcedure
+  createEducation: protectedProcedure
     .input(educationCreateSchema)
     .mutation(async ({ ctx, input }) => {
       try {
@@ -49,7 +49,7 @@ export const educationRouter = router({
         });
       }
     }),
-  getEducations: publicProcedure.query(async ({ ctx }) => {
+  getEducations: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.education.findMany({
         where: {
@@ -67,7 +67,7 @@ export const educationRouter = router({
       });
     }
   }),
-  updateEducation: publicProcedure
+  updateEducation: protectedProcedure
     .input(educationUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       try {
@@ -99,7 +99,7 @@ export const educationRouter = router({
         });
       }
     }),
-  deleteEducation: publicProcedure
+  deleteEducation: protectedProcedure
     .input(educationDeleteSchema)
     .mutation(async ({ ctx, input }) => {
       try {

@@ -5,10 +5,10 @@ import {
   experienceReadForUserSchema,
   experienceUpdateSchema,
 } from "../../../schema/experience";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const experienceRouter = router({
-  createExperience: publicProcedure
+  createExperience: protectedProcedure
     .input(experienceCreateSchema)
     .mutation(async ({ ctx, input }) => {
       try {
@@ -49,7 +49,7 @@ export const experienceRouter = router({
         });
       }
     }),
-  getExperiences: publicProcedure.query(async ({ ctx }) => {
+  getExperiences: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.experience.findMany({
         where: {
@@ -67,7 +67,7 @@ export const experienceRouter = router({
       });
     }
   }),
-  updateExperience: publicProcedure
+  updateExperience: protectedProcedure
     .input(experienceUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       try {
@@ -99,7 +99,7 @@ export const experienceRouter = router({
         });
       }
     }),
-  deleteExperience: publicProcedure
+  deleteExperience: protectedProcedure
     .input(experienceDeleteSchema)
     .mutation(async ({ ctx, input }) => {
       try {

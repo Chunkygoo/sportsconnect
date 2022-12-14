@@ -1,6 +1,5 @@
 import type { GetStaticProps } from "next";
 import loadNamespaces from "next-translate/loadNamespaces";
-import { useRouter } from "next/router";
 // import { useEffect } from "react";
 import Benefits from "../components/Home/Benefits";
 import Description from "../components/Home/Description";
@@ -9,7 +8,7 @@ import Hero from "../components/Home/Hero";
 import Process from "../components/Home/Process";
 
 export default function Home() {
-  const router = useRouter();
+  // const router = useRouter();
   // For Google login
   // useEffect(() => {
   //   if (localStorage.getItem("lang") !== router.locale) {

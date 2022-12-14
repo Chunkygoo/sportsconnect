@@ -1,7 +1,6 @@
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import type { headerNavType } from "../../types/headerNav";
 import UniversityDropdown from "../Universities/UniversityDropdown";
@@ -18,7 +17,6 @@ export default function HeaderNavLarge({
 
   const loading = session.loading;
   const loadedNotAuth = !session.loading && !session.doesSessionExist;
-  // const loadedAuth = !session.loading && session.doesSessionExist;
 
   return (
     <ul className="DESKTOP-MENU hidden space-x-8 lg:flex">
@@ -72,30 +70,31 @@ export default function HeaderNavLarge({
         </Link>
       </li>
       {loading || loadedNotAuth ? (
-        <Fragment>
-          <li>
-            <Link
-              href={
-                router.asPath !== "/auth/loginsignup"
-                  ? "/auth/loginsignup"
-                  : "#"
+        <li>
+          <Link
+            href={
+              router.asPath !== "/auth/loginsignup" ? "/auth/loginsignup" : "#"
+            }
+            onClick={(event) => {
+              if (loading) {
+                event.preventDefault();
               }
+            }}
+          >
+            <span
+              className={
+                "block rounded py-2 pr-4 pl-3 text-gray-700 hover:border-b hover:border-gray-800 hover:text-blue-700 lg:bg-transparent lg:p-0 " +
+                (urlPath.includes("/auth/loginsignup")
+                  ? "border-b border-gray-800 text-blue-700"
+                  : "")
+              }
+              aria-current="page"
             >
-              <span
-                className={
-                  "block rounded py-2 pr-4 pl-3 text-gray-700 hover:border-b hover:border-gray-800 hover:text-blue-700 lg:bg-transparent lg:p-0 " +
-                  (urlPath.includes("/auth/loginsignup")
-                    ? "border-b border-gray-800 text-blue-700"
-                    : "")
-                }
-                aria-current="page"
-              >
-                {" "}
-                {t("header:login_signup")}
-              </span>
-            </Link>
-          </li>
-        </Fragment>
+              {" "}
+              {t("header:login_signup")}
+            </span>
+          </Link>
+        </li>
       ) : (
         <li>
           <button

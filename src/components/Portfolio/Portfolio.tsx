@@ -22,12 +22,6 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
     undefined,
     {
       onSuccess(data) {
-        // console.log(data);
-        // if (status === 200) {
-        //   setUser(data);
-        // } else if (status == 404 || status == 422) {
-        //   router.push("/usernotfound");
-        // }
         setUserInfo(data);
       },
       onError() {
@@ -64,22 +58,19 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
     },
   });
   const [userInfo, setUserInfo] = useState(publicView ? publicUserData : data); // need this for OU
-  const isDisabled = publicView;
 
-  const {
-    data: { getUrl: profilePhotoUrl } = {},
-    // mutate,
-  } = trpc.image.getPreSignedURLForRead.useQuery(
-    { key: userInfo?.profilePhoto?.key },
-    {
-      onError() {
-        toast.error("An error occured while getting your image", {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      },
-      enabled: !!userInfo?.profilePhoto?.key,
-    }
-  );
+  const { data: { getUrl: profilePhotoUrl } = {} } =
+    trpc.image.getPreSignedURLForRead.useQuery(
+      { key: userInfo?.profilePhoto?.key },
+      {
+        onError() {
+          toast.error("An error occured while getting your image", {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          });
+        },
+        enabled: !!userInfo?.profilePhoto?.key,
+      }
+    );
 
   useEffect(() => {
     if (publicView && !publicUserData) {
@@ -87,17 +78,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
     }
   }, [publicUserData, publicView, router]);
 
-  if (isError) {
-    // router.push("/error");
-    return (
-      <div className="m-auto">
-        Error
-        <Spinner size="16" />
-      </div>
-    );
-  }
-
-  if (!userInfo) {
+  if (!userInfo || isError) {
     return (
       <div className="m-auto">
         <Spinner size="16" />
@@ -131,7 +112,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                     height={600}
                   />
                 )}
-                {!isDisabled &&
+                {!publicView &&
                   (loading ? (
                     <svg
                       aria-hidden="true"
@@ -163,7 +144,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                     </div>
                   ))}
               </div>
-              {!isDisabled && (
+              {!publicView && (
                 <div className="mt-2 flex border-b-2 border-gray-300 md:text-xs lg:text-base">
                   <div className="w-full">
                     <Tooltip
@@ -267,7 +248,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
               )}
               <h1 className="my-3 leading-8 text-gray-900">
                 <Input
-                  isDisabled={isDisabled}
+                  isDisabled={publicView}
                   label={t("portfolio:preferred_name")}
                   name="Preferred name"
                   type="text"
@@ -282,7 +263,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
               </h1>
               <div className="h-[20vh] max-h-[10rem] w-full leading-6 md:h-full md:max-h-[12rem]">
                 <Input
-                  isDisabled={isDisabled}
+                  isDisabled={publicView}
                   label={t("portfolio:bio")}
                   name="Bio"
                   type="text"
@@ -321,7 +302,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                 <div className="grid text-sm md:grid-cols-2">
                   <div className="py-2 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:name")}
                       name="Name"
                       type="text"
@@ -333,7 +314,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   </div>
                   <div className="py-2 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:wechat_id")}
                       name=""
                       type="text"
@@ -349,7 +330,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
 
                   <div className="py-2 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:gender")}
                       name="Gender"
                       type="text"
@@ -361,7 +342,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   </div>
                   <div className="py-2 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:contact_no")}
                       name="Contact No."
                       type="text"
@@ -376,7 +357,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   </div>
                   <div className="py-2 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:current_address")}
                       name="Current address"
                       type="text"
@@ -391,7 +372,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   </div>
                   <div className="py-2 pb-0 md:px-4">
                     <Input
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       label={t("portfolio:permanent_address")}
                       name="Permanent address"
                       type="text"
@@ -422,7 +403,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                       {t("portfolio:birthday")}
                     </div>
                     <YearMonthDayPicker
-                      isDisabled={isDisabled}
+                      isDisabled={publicView}
                       selected={
                         userInfo.birthday
                           ? new Date(userInfo.birthday)
@@ -444,9 +425,9 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
             <div className="rounded-sm bg-white shadow-sm">
               <div className="gap-x-3 px-4 sm:grid sm:grid-cols-2">
                 <div className="mb-10 sm:mb-0">
-                  <Experiences isDisabled={isDisabled} />
+                  <Experiences isDisabled={publicView} />
                 </div>
-                <Educations isDisabled={isDisabled} />
+                <Educations isDisabled={publicView} />
               </div>
             </div>
           </div>

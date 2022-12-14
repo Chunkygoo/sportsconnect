@@ -1,7 +1,7 @@
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import type { headerNavType } from "../../types/headerNav";
 import UniversityDropdown from "../Universities/UniversityDropdown";
@@ -16,10 +16,8 @@ export default function HeaderNavSmall({
   const [isNavOpen, setIsNavOpen] = useState(false);
   const router = useRouter();
   const urlPath = router.asPath;
-  if (session.loading) {
-    return null;
-  }
-  const { doesSessionExist } = session;
+  const loading = session.loading;
+  const loadedNotAuth = !session.loading && !session.doesSessionExist;
 
   return (
     <section className="MOBILE-MENU flex lg:hidden">
@@ -113,35 +111,39 @@ export default function HeaderNavSmall({
               </span>
             </Link>
           </li>
-          {!doesSessionExist ? (
-            <Fragment>
-              <li>
-                <Link
-                  href={
-                    router.asPath !== "/auth/loginsignup"
-                      ? "/auth/loginsignup"
-                      : "#"
+          {loading || loadedNotAuth ? (
+            <li>
+              <Link
+                href={
+                  router.asPath !== "/auth/loginsignup"
+                    ? "/auth/loginsignup"
+                    : "#"
+                }
+                onClick={(event) => {
+                  if (loading) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <span
+                  onClick={() => {
+                    setIsNavOpen(false);
+                  }}
+                  className={
+                    "my-12 border-b border-gray-400 text-xl uppercase hover:bg-gray-200" +
+                    (urlPath.includes("loginsignup")
+                      ? "border-blue-800 text-blue-700"
+                      : "")
                   }
                 >
-                  <span
-                    onClick={() => {
-                      setIsNavOpen(false);
-                    }}
-                    className={
-                      "my-12 border-b border-gray-400 text-xl uppercase hover:bg-gray-200" +
-                      (urlPath.includes("loginsignup")
-                        ? "border-blue-800 text-blue-700"
-                        : "")
-                    }
-                  >
-                    {t("header:login_signup")}
-                  </span>
-                </Link>
-              </li>
-            </Fragment>
+                  {t("header:login_signup")}
+                </span>
+              </Link>
+            </li>
           ) : (
             <li>
               <button
+                type="button"
                 disabled={loggingOut}
                 onClick={() => {
                   handleLogout();

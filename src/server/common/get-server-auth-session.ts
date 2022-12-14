@@ -14,8 +14,15 @@ export const getServerAuthSession = async (ctx: {
   try {
     return await Session.getSession(req, res);
   } catch (error: any) {
+    if (error.type === "TRY_REFRESH_TOKEN") {
+      throw new TRPCError({
+        code: "UNAUTHORIZED", // UNAUTHORIZED signals 401 which automatically triggers the frontend ST refresh API
+        message: error.type,
+        cause: error,
+      });
+    }
     throw new TRPCError({
-      code: "UNAUTHORIZED", // UNAUTHORIZED signals 401 which automatically triggers the frontend ST refresh API
+      code: "FORBIDDEN",
       message: error.type,
       cause: error,
     });

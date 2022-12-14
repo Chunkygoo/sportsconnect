@@ -50,9 +50,6 @@ export default function UniversityDropdown({
             "absolute mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:right-0 " +
             (showUni ? "" : "hidden")
           }
-          // role="menu"
-          // aria-orientation="vertical"
-          // aria-labelledby="menu-button"
         >
           <div className="py-1" role="none">
             {uniRoutes.map((uniRoute, index) => (
