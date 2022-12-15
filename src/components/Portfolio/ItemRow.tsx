@@ -3,6 +3,7 @@ import useTranslation from "next-translate/useTranslation";
 import { Fragment, useEffect, useRef } from "react";
 import { DebounceInput } from "react-debounce-input";
 import { BsFillTrashFill } from "react-icons/bs";
+import { toast } from "react-toastify";
 import type { itemRowType } from "../../types/itemRow";
 import YearMonthDayPicker from "../DatePicker/YearMonthDayPicker";
 
@@ -17,6 +18,16 @@ export default function ItemRow({
   useEffect(() => {
     if (textareaRef.current) autosize(textareaRef.current);
   }, []);
+
+  const startEndDatesValid = (startDateTime: number, endDateTime: number) => {
+    if (endDateTime < startDateTime) {
+      toast.warn("Start date must be earlier than end date", {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+      return false;
+    }
+    return true;
+  };
 
   return (
     <Fragment>
@@ -54,7 +65,19 @@ export default function ItemRow({
               isDisabled={isDisabled}
               selected={itemRowObject.startDate}
               onChange={(date: Date) => {
-                updateItem({ ...itemRowObject, startDate: date });
+                if (
+                  startEndDatesValid(
+                    date.getTime(),
+                    itemRowObject.endDate.getTime()
+                  )
+                ) {
+                  updateItem({
+                    ...itemRowObject,
+                    startDate: date,
+                  });
+                  return true;
+                }
+                return false;
               }}
               className="m-0 max-w-[4rem] border-0 border-gray-200 bg-transparent p-0 text-xs 
                           hover:cursor-pointer focus:border-black focus:outline-none focus:ring-0"
@@ -68,7 +91,19 @@ export default function ItemRow({
                 isDisabled={isDisabled}
                 selected={itemRowObject.endDate}
                 onChange={(date: Date) => {
-                  updateItem({ ...itemRowObject, endDate: date });
+                  if (
+                    startEndDatesValid(
+                      itemRowObject.startDate.getTime(),
+                      date.getTime()
+                    )
+                  ) {
+                    updateItem({
+                      ...itemRowObject,
+                      endDate: date,
+                    });
+                    return true;
+                  }
+                  return false;
                 }}
                 className="m-0 max-w-[4rem] border-0 border-gray-200 bg-transparent p-0 text-xs 
                           hover:cursor-pointer focus:border-black focus:outline-none focus:ring-0"

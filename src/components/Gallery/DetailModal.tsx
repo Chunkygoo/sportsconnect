@@ -6,7 +6,7 @@ export default function DetailModal({
   display,
   uni,
   setAllUnis,
-  mine,
+  myInterested,
 }: detailModalType) {
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function DetailModal({
                 uni={uni}
                 onClose={() => setShowModal(false)}
                 setAllUnis={setAllUnis}
-                mine={mine}
+                myInterested={myInterested}
               />
             </div>
           </div>

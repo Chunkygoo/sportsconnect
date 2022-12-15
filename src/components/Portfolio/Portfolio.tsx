@@ -406,12 +406,16 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                       isDisabled={publicView}
                       selected={
                         userInfo.birthday
-                          ? new Date(userInfo.birthday)
+                          ? userInfo.birthday
                           : new Date("2022-07-02T15:00:00Z")
                       }
-                      onChange={(date: Date) =>
-                        updateUserInfo({ ...userInfo, birthday: date })
-                      }
+                      onChange={(date: Date) => {
+                        updateUserInfo({
+                          ...userInfo,
+                          birthday: date,
+                        });
+                        return true;
+                      }}
                       className="w-full border-0 border-b-2 border-gray-200 bg-transparent pb-2 focus:border-black focus:outline-none focus:ring-0"
                       wrapperClassName=""
                     />

@@ -1,7 +1,7 @@
 export type galleryItemType = {
   datum: searchedUnisType;
   setAllUnis: React.Dispatch<React.SetStateAction<allUnisType[]>>;
-  mine: boolean;
+  myInterested: boolean;
 };
 
 export type searchedUnisType = {
@@ -18,7 +18,7 @@ export type searchedUnisType = {
   category: string;
   region: string;
   link: string;
-  interested?: boolean;
+  interested: boolean;
 };
 
 export type allUnisType = {
@@ -31,4 +31,5 @@ export type allUnisType = {
   category: string;
   region: string;
   link: string;
+  interested: boolean;
 };

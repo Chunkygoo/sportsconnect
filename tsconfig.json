@@ -17,5 +17,11 @@
     "noUncheckedIndexedAccess": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "ts-node": {
+    // We use ts-node for db-seed confirmation. These options are overrides used only by ts-node same as the --compilerOptions flag
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }

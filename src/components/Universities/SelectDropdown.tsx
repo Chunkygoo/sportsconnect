@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { selectDropdownType } from "../../types/selectDropdown";
+import type { selectDropdownType } from "../../types/selectDropdown";
 
 // https://www.npmjs.com/package/react-onclickoutside
 import listenForOutsideClick from "../../utils/listenForOutsideClick";

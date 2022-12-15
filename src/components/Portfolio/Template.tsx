@@ -58,8 +58,8 @@ export default function Template({
             Object.values(data).map((datum) => {
               const itemRowObject = {
                 id: datum.id,
-                active: datum.active,
-                description: datum.description,
+                active: datum.active || false,
+                description: datum.description || "",
                 startDate:
                   datum.startDate ||
                   new Date(yymmdd(new Date()) + "T00:00:00Z"),

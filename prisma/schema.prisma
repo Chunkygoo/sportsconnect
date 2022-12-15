@@ -11,7 +11,7 @@ datasource db {
 }
 
 model UserInfo {
-  id               String           @id
+  id               String        @id
   email            String
   name             String?
   wechatId         String?
@@ -21,14 +21,14 @@ model UserInfo {
   contactNumber    String?
   currentAddress   String?
   permanentAddress String?
-  birthday         DateTime?        @db.Date
-  createdAt        DateTime         @default(now())
-  public           Boolean          @default(false)
+  birthday         DateTime?     @db.Date
+  createdAt        DateTime      @default(now())
+  public           Boolean       @default(false)
   experiences      Experience[]
   educations       Education[]
   profilePhoto     ProfilePhoto?
-  role             Role             @default(USER)
-  unis             UserInfoOnUnis[]
+  role             Role          @default(USER)
+  unis             University[]
 }
 
 model Experience {
@@ -61,7 +61,7 @@ model ProfilePhoto {
 }
 
 model University {
-  id         String           @id @default(cuid())
+  id         String     @id @default(cuid())
   name       String
   city       String
   state      String
@@ -70,18 +70,18 @@ model University {
   category   String
   region     String
   link       String
-  createdAt  DateTime         @default(now())
-  userInfo   UserInfoOnUnis[]
+  createdAt  DateTime   @default(now())
+  userInfo   UserInfo[]
 }
 
-model UserInfoOnUnis {
-  userInfo     UserInfo   @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
-  userInfoId   String
-  university   University @relation(fields: [universityId], references: [id], onDelete: Cascade)
-  universityId String
+// model UserInfoOnUnis {
+//   userInfo     UserInfo   @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
+//   userInfoId   String
+//   university   University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+//   universityId String
 
-  @@id([userInfoId, universityId])
-}
+//   @@id([userInfoId, universityId])
+// }
 
 enum Role {
   USER

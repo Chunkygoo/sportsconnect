@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect, useRef, useState } from "react";
 import { DebounceInput } from "react-debounce-input";
@@ -20,12 +19,16 @@ import {
   regionOptions,
   stateOptions,
 } from "../../data/universityFilters";
+import { UniversitiesGallery } from "../../types/universitiesGallery";
 import chunk from "../../utils/chunk";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../Common/Spinner";
 import SelectDropdown from "./SelectDropdown";
 
-export default function UniversitiesGallery() {
+export default function UniversitiesGallery({
+  myInterested,
+  publicUnis,
+}: UniversitiesGallery) {
   // const [hasMore, setHasMore] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(cateGoryOptions[0]);
   const [selectedConference, setSelectedConference] = useState(
@@ -38,35 +41,88 @@ export default function UniversitiesGallery() {
   const toastId = useRef("");
   const { t } = useTranslation();
   const {
-    data: uniData,
-    hasNextPage,
-    fetchNextPage,
-    isFetching,
-    isLoading,
-  } = trpc.university.getUniversities.useInfiniteQuery(
+    data: publicUniData,
+    hasNextPage: publicHasNextPage,
+    fetchNextPage: publicFetchNextPage,
+    isFetching: publicIsFetching,
+    isLoading: publicIsloading,
+  } = trpc.university.getPublicUniversities.useInfiniteQuery(
     {
       limit: 9,
       state: selectedState?.value,
     },
     {
+      enabled: publicUnis && !myInterested,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
+  const {
+    data: myUniData,
+    hasNextPage: myHasNextPage,
+    fetchNextPage: myFetchNextPage,
+    isFetching: myIsFetching,
+    isLoading: myIsloading,
+  } = trpc.university.getMyUniversities.useInfiniteQuery(
+    {
+      limit: 9,
+      state: selectedState?.value,
+    },
+    {
+      enabled: !publicUnis && !myInterested,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
+  const {
+    data: myInterestedUniData,
+    hasNextPage: myInterestedHasNextPage,
+    fetchNextPage: myInterestedFetchNextPage,
+    isFetching: myInterestedIsFetching,
+    isLoading: myInterestedIsloading,
+  } = trpc.university.getMyInterestedUniversities.useInfiniteQuery(
+    {
+      limit: 9,
+      state: selectedState?.value,
+    },
+    {
+      enabled: !publicUnis && myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
 
-  const queryClient = useQueryClient();
+  const data =
+    publicUnis && !myInterested
+      ? publicUniData
+      : !publicUnis && !myInterested
+      ? myUniData
+      : myInterestedUniData;
 
-  // var mine = !_res; // needs to be var to avoid scope errors
+  const hasNextPage =
+    publicUnis && !myInterested
+      ? publicHasNextPage
+      : !publicUnis && !myInterested
+      ? myHasNextPage
+      : myInterestedHasNextPage;
 
-  const mine = false;
+  const fetchNextPage =
+    publicUnis && !myInterested
+      ? publicFetchNextPage
+      : !publicUnis && !myInterested
+      ? myFetchNextPage
+      : myInterestedFetchNextPage;
 
-  // const searchTerm = JSON.stringify({
-  //   searchNameOrCity: searchNameOrCity,
-  //   selectedState: selectedState.value,
-  //   selectedConference: selectedConference.value,
-  //   selectedDivision: selectedDivision.value,
-  //   selectedRegion: selectedRegion.value,
-  //   selectedCategory: selectedCategory.value,
-  // });
+  const isFetching =
+    publicUnis && !myInterested
+      ? publicIsFetching
+      : !publicUnis && !myInterested
+      ? myIsFetching
+      : myInterestedIsFetching;
+
+  const isLoading =
+    publicUnis && !myInterested
+      ? publicIsloading
+      : !publicUnis && !myInterested
+      ? myIsloading
+      : myInterestedIsloading;
 
   // const resetLength =
   //   queryClient.getQueryData([reactQueryKeys.universities, mine, searchTerm])
@@ -120,9 +176,9 @@ export default function UniversitiesGallery() {
   //     },
   //   }
   // );
-  // const [allUnis, setAllUnis] = useState(_res?.data || uniData?.data || []);
+
   const [allUnis, setAllUnis] = useState(
-    uniData?.pages.flatMap((page) => page.unis) ?? []
+    data?.pages.flatMap((page) => page.unis) ?? []
   );
   const searchedUnis = transformUnis(allUnis);
 
@@ -208,7 +264,7 @@ export default function UniversitiesGallery() {
   // };
 
   function transformUnis(unis: typeof allUnis) {
-    return unis.map((uni, index) => {
+    return unis.map((uni) => {
       const uniObj = {
         ...uni,
         backgroundImage: `/backgrounds/${uni.name}.jpg`,
@@ -347,8 +403,7 @@ export default function UniversitiesGallery() {
                           key={uniChunkBit.id}
                           datum={uniChunkBit}
                           setAllUnis={setAllUnis}
-                          mine={mine}
-                          // searchTerm={searchTerm}
+                          myInterested={myInterested}
                         />
                       )
                     );

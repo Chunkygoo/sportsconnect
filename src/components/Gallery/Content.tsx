@@ -4,7 +4,7 @@ import type { contentType } from "../../types/content";
 import CheckBox from "../Universities/CheckBox";
 import IconCross from "./../Icons/IconCross";
 
-const Content = ({ uni, mine, onClose, setAllUnis }: contentType) => {
+const Content = ({ uni, myInterested, onClose, setAllUnis }: contentType) => {
   const { t } = useTranslation();
   return (
     <>
@@ -76,10 +76,10 @@ const Content = ({ uni, mine, onClose, setAllUnis }: contentType) => {
           </div>
           <div className="mt-4 max-w-xs font-[18px] text-[#d4d3d3] sm:max-w-sm md:max-w-md">
             <CheckBox
-              interested={uni.interested || false}
+              interested={uni.interested}
               uniId={uni.id}
               setAllUnis={setAllUnis}
-              mine={mine}
+              myInterested={myInterested}
               onClose={onClose}
             />
           </div>

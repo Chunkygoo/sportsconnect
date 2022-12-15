@@ -1,84 +1,86 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import type { checkBoxType } from "../../types/checkBox";
-// import { reactQueryKeys } from "../../config/reactQueryKeys";
-// import {
-//   expressInterestInUni,
-//   removeInterestInUni,
-// } from "../../network/lib/users";
+import { trpc } from "../../utils/trpc";
 
 export default function CheckBox({
   interested,
   uniId,
   setAllUnis,
-  mine,
+  myInterested,
   onClose,
 }: checkBoxType) {
   const session = useSessionContext();
   const router = useRouter();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  // Use toggleInterestInUni
-  const alterInterestMutationFunction = interested
-    ? async (id) => {
-        return await removeInterestInUni(id);
-      }
-    : async (id) => {
-        return await expressInterestInUni(id);
-      };
-  const { mutate: updateInterestInUni } = useMutation(
-    (_uniId) => alterInterestMutationFunction(_uniId),
-    {
-      onMutate: async (_uniId) => {
-        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries([
-          reactQueryKeys.universities,
-          mine,
-          searchTerm,
-        ]);
-        const previousUniData = queryClient.getQueryData([
-          reactQueryKeys.universities,
-          mine,
-          searchTerm,
-        ]);
-        // Optimistic update
+  const utils = trpc.useContext();
+
+  const { mutate: toggleInterestInUni } =
+    trpc.university.toggleInterestInUni.useMutation({
+      async onMutate({ uniId: _uniId, interested: _interested }) {
+        let previousUniData;
+        if (myInterested) {
+          await utils.university.getMyInterestedUniversities.cancel();
+          previousUniData =
+            utils.university.getMyInterestedUniversities.getData();
+        } else {
+          await utils.university.getMyUniversities.cancel();
+          previousUniData = utils.university.getMyUniversities.getData();
+        }
         setAllUnis((prevAllUnis) => {
-          const newAllUnis = [...prevAllUnis];
-          const modifiedUniIndex = prevAllUnis.findIndex(
-            (uni) => uni.id === _uniId
-          );
-          newAllUnis[modifiedUniIndex] = {
-            ...newAllUnis[modifiedUniIndex],
-            interested: !interested,
-          };
-          if (mine && interested) {
+          let modifiedUniIndex = -1;
+          let newAllUnis = [...prevAllUnis];
+          newAllUnis = newAllUnis.map((uni, index) => {
+            if (uni.id === _uniId) {
+              modifiedUniIndex = index;
+              return {
+                ...uni,
+                interested: !_interested,
+              };
+            }
+            return uni;
+          });
+          // const modifiedUniIndex = prevAllUnis.findIndex(
+          //   (prevUni) => prevUni.id === _uniId
+          // );
+          // if (modifiedUniIndex !== -1)
+          //   newAllUnis[modifiedUniIndex] = {
+          //     ...newAllUnis[modifiedUniIndex],
+          //     interested: !_interested,
+          //   };
+          if (myInterested && _interested && modifiedUniIndex !== -1) {
             newAllUnis.splice(modifiedUniIndex, 1); // remove from myuniversities
           }
           return newAllUnis;
         });
         return { previousUniData };
       },
-      onError: (_, __, context) => {
-        queryClient.setQueryData(
-          [reactQueryKeys.universities, mine, searchTerm],
-          context.previousUniData
-        );
+      onError(_, __, context) {
+        if (myInterested) {
+          utils.university.getMyInterestedUniversities.setData(
+            undefined,
+            context?.previousUniData
+          );
+        } else {
+          utils.university.getMyUniversities.setData(
+            undefined,
+            context?.previousUniData
+          );
+        }
         toast.error("An error occured while updating your data", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
       },
-      onSettled: () => {
-        queryClient.invalidateQueries([
-          reactQueryKeys.universities,
-          mine,
-          searchTerm,
-        ]);
+      onSettled() {
+        if (myInterested) {
+          utils.university.getMyInterestedUniversities.invalidate();
+        } else {
+          utils.university.getMyUniversities.invalidate();
+        }
       },
-    }
-  );
+    });
 
   return (
     <span
@@ -91,7 +93,10 @@ export default function CheckBox({
       onClick={() => {
         if (!session.loading && session.doesSessionExist) {
           onClose();
-          updateInterestInUni(uniId);
+          toggleInterestInUni({
+            uniId: uniId,
+            interested: interested,
+          });
         } else {
           router.push("/auth/loginsignup");
         }

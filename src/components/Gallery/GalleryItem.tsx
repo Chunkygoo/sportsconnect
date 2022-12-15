@@ -5,7 +5,7 @@ import DetailModal from "./DetailModal";
 export default function GalleryItem({
   datum,
   setAllUnis,
-  mine,
+  myInterested,
 }: galleryItemType) {
   const display = datum && (
     <div className="flex w-[95%] flex-wrap">
@@ -31,7 +31,7 @@ export default function GalleryItem({
       display={display}
       uni={datum}
       setAllUnis={setAllUnis}
-      mine={mine}
+      myInterested={myInterested}
     />
   );
 }
