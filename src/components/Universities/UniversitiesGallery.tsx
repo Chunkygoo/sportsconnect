@@ -3,15 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { DebounceInput } from "react-debounce-input";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { toast } from "react-toastify";
-import GalleryItem from "../Gallery/GalleryItem";
-
-// import {
-//   getInterestedUniversities,
-//   getPublicUniversities,
-//   getUniversities,
-// } from "../../network/lib/universities";
-// import chunk from "../../utilities/chunk";
-// import GalleryRow from "../Gallery/GalleryRow";
 import {
   cateGoryOptions,
   conferenceOptions,
@@ -19,39 +10,47 @@ import {
   regionOptions,
   stateOptions,
 } from "../../data/universityFilters";
-import { UniversitiesGallery } from "../../types/universitiesGallery";
+import type { allUnisType } from "../../types/GalleryItem";
+import type { UniversitiesGallery } from "../../types/universitiesGallery";
 import chunk from "../../utils/chunk";
 import { trpc } from "../../utils/trpc";
 import Spinner from "../Common/Spinner";
+import GalleryItem from "../Gallery/GalleryItem";
 import SelectDropdown from "./SelectDropdown";
 
 export default function UniversitiesGallery({
   myInterested,
   publicUnis,
 }: UniversitiesGallery) {
-  // const [hasMore, setHasMore] = useState(true);
+  const [searchNameOrCity, setSearchNameOrCity] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(cateGoryOptions[0]);
+  const [selectedDivision, setSelectedDivision] = useState(divisionOptions[0]);
   const [selectedConference, setSelectedConference] = useState(
     conferenceOptions[0]
   );
   const [selectedState, setSelectedState] = useState(stateOptions[0]);
   const [selectedRegion, setSelectedRegion] = useState(regionOptions[0]);
-  const [selectedDivision, setSelectedDivision] = useState(divisionOptions[0]);
-  const [searchNameOrCity, setSearchNameOrCity] = useState("");
   const toastId = useRef("");
   const { t } = useTranslation();
   const {
     data: publicUniData,
     hasNextPage: publicHasNextPage,
     fetchNextPage: publicFetchNextPage,
-    isFetching: publicIsFetching,
     isLoading: publicIsloading,
   } = trpc.university.getPublicUniversities.useInfiniteQuery(
     {
-      limit: 9,
+      search: searchNameOrCity,
       state: selectedState?.value,
+      conference: selectedConference?.value,
+      division: selectedDivision?.value,
+      category: selectedCategory?.value,
+      region: selectedRegion?.value,
+      limit: 12,
     },
     {
+      onSuccess(data) {
+        setAllUnis(data.pages.flatMap((page) => page.unis));
+      },
       enabled: publicUnis && !myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
@@ -60,14 +59,21 @@ export default function UniversitiesGallery({
     data: myUniData,
     hasNextPage: myHasNextPage,
     fetchNextPage: myFetchNextPage,
-    isFetching: myIsFetching,
     isLoading: myIsloading,
   } = trpc.university.getMyUniversities.useInfiniteQuery(
     {
-      limit: 9,
+      search: searchNameOrCity,
       state: selectedState?.value,
+      conference: selectedConference?.value,
+      division: selectedDivision?.value,
+      category: selectedCategory?.value,
+      region: selectedRegion?.value,
+      limit: 12,
     },
     {
+      onSuccess(data) {
+        setAllUnis(data.pages.flatMap((page) => page.unis));
+      },
       enabled: !publicUnis && !myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
@@ -76,14 +82,21 @@ export default function UniversitiesGallery({
     data: myInterestedUniData,
     hasNextPage: myInterestedHasNextPage,
     fetchNextPage: myInterestedFetchNextPage,
-    isFetching: myInterestedIsFetching,
     isLoading: myInterestedIsloading,
   } = trpc.university.getMyInterestedUniversities.useInfiniteQuery(
     {
-      limit: 9,
+      search: searchNameOrCity,
       state: selectedState?.value,
+      conference: selectedConference?.value,
+      division: selectedDivision?.value,
+      category: selectedCategory?.value,
+      region: selectedRegion?.value,
+      limit: 12,
     },
     {
+      onSuccess(data) {
+        setAllUnis(data.pages.flatMap((page) => page.unis));
+      },
       enabled: !publicUnis && myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
@@ -110,13 +123,6 @@ export default function UniversitiesGallery({
       ? myFetchNextPage
       : myInterestedFetchNextPage;
 
-  const isFetching =
-    publicUnis && !myInterested
-      ? publicIsFetching
-      : !publicUnis && !myInterested
-      ? myIsFetching
-      : myInterestedIsFetching;
-
   const isLoading =
     publicUnis && !myInterested
       ? publicIsloading
@@ -124,91 +130,30 @@ export default function UniversitiesGallery({
       ? myIsloading
       : myInterestedIsloading;
 
-  // const resetLength =
-  //   queryClient.getQueryData([reactQueryKeys.universities, mine, searchTerm])
-  //     ?.data.length || 9;
-  // const getUnisFunction = async (limit, skip, search = "", signal) => {
-  //   if (!(await Session.doesSessionExist())) {
-  //     return await getPublicUniversities(limit, signal, skip, search);
-  //   }
-  //   const getUnis = mine ? getInterestedUniversities : getUniversities;
-  //   return await getUnis(limit, signal, skip, search);
-  // };
-
-  // const getRequestLength = () => {
-  //   const currentCacheLength = queryClient.getQueryData([
-  //     reactQueryKeys.universities,
-  //     mine,
-  //     searchTerm,
-  //   ])?.data.length;
-  //   if (currentCacheLength && currentCacheLength >= 9) {
-  //     return currentCacheLength;
-  //   }
-  //   return 9;
-  // };
-
-  // const { data: uniData, isLoading: loading } = useQuery(
-  //   [reactQueryKeys.universities, mine, searchTerm],
-  //   ({ signal }) => {
-  //     // we cannot use resetLength here because it captures the length at render, not in real/current time
-  //     // whereas how we do it below, we compute the values when the function "getRequestLength" is invoked, so we get the most
-  //     // up to date values.
-  //     return getUnisFunction(getRequestLength(), 0, searchTerm, signal);
-  //   },
-  //   {
-  //     onSuccess: async ({ data, status }) => {
-  //       if (status === 200) {
-  //         setAllUnis(data);
-  //         if (data.length === 0) {
-  //           setHasMore(false);
-  //         } else {
-  //           await fetchMoreData();
-  //         }
-  //       } else {
-  //         router.push("/error");
-  //       }
-  //     },
-  //     onError: async () => {
-  //       toast.error("An error occured while retrieving universities", {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //       setHasMore(false);
-  //     },
-  //   }
-  // );
-
-  const [allUnis, setAllUnis] = useState(
-    data?.pages.flatMap((page) => page.unis) ?? []
+  const [allUnis, setAllUnis] = useState<allUnisType[]>(
+    data?.pages.flatMap((page) => page.unis) || []
   );
   const searchedUnis = transformUnis(allUnis);
 
-  // optimistic retrieve - if data in cache, use it. The reason we can't use useQuery to do this for us is because
-  // searchTerm in [reactQueryKeys.universities, mine, searchTerm] changes
-  // useEffect(() => {
-  //   const cachedData = queryClient.getQueryData([
-  //     reactQueryKeys.universities,
-  //     mine,
-  //     searchTerm,
-  //   ])?.data;
-  //   if (cachedData) {
-  //     setAllUnis(cachedData);
-  //     setHasMore(true);
-  //   }
-  // }, [mine, queryClient, searchTerm]);
-  // end optimistic retrieve
-
   const notify = () =>
     (toastId.current = String(
-      toast("Click me to go back to the top ⬆️⬆️⬆️", {
-        autoClose: false,
-        closeButton: false,
-        position: toast.POSITION.BOTTOM_RIGHT,
-        onClose: () =>
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          }),
-      })
+      toast(
+        <span
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            })
+          }
+        >
+          Click me to go back to the top ⬆️⬆️⬆️
+        </span>,
+        {
+          autoClose: false,
+          closeButton: false,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        }
+      )
     ));
 
   useEffect(() => {
@@ -228,40 +173,6 @@ export default function UniversitiesGallery({
       window.removeEventListener("scroll", toggleScrollToTop);
     };
   }, []);
-
-  // const fetchMoreData = async () => {
-  //   try {
-  //     let res = await getUnisFunction(
-  //       9,
-  //       queryClient.getQueryData([
-  //         reactQueryKeys.universities,
-  //         mine,
-  //         searchTerm,
-  //       ])?.data.length || 9,
-  //       searchTerm
-  //     );
-  //     // unlike the intial fetch, we want to check if there is more data to be fetched. So check < 9, not === 0
-  //     if (res?.data.length < 9) {
-  //       setHasMore(false);
-  //     }
-  //     setAllUnis((prevUnis) => {
-  //       const newAllUnis = [].concat(prevUnis, res.data);
-  //       queryClient.setQueryData(
-  //         [reactQueryKeys.universities, mine, searchTerm],
-  //         (oldQueryObj) => {
-  //           const newQueryObj = { ...oldQueryObj };
-  //           newQueryObj.data = newAllUnis;
-  //           return newQueryObj;
-  //         }
-  //       );
-  //       return newAllUnis;
-  //     });
-  //   } catch (error) {
-  //     toast.error("An error occured while retrieving more universities", {
-  //       position: toast.POSITION.BOTTOM_RIGHT,
-  //     });
-  //   }
-  // };
 
   function transformUnis(unis: typeof allUnis) {
     return unis.map((uni) => {

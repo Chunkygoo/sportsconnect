@@ -5,6 +5,7 @@ import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import type { portfolioType } from "../../types/portfolio";
 import { trpc } from "../../utils/trpc";
+import yymmdd from "../../utils/yymmdd";
 import Spinner from "../Common/Spinner";
 import CropImage from "../CropImage/CropImage";
 import YearMonthDayPicker from "../DatePicker/YearMonthDayPicker";
@@ -405,9 +406,8 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                     <YearMonthDayPicker
                       isDisabled={publicView}
                       selected={
-                        userInfo.birthday
-                          ? userInfo.birthday
-                          : new Date("2022-07-02T15:00:00Z")
+                        userInfo.birthday ||
+                        new Date(yymmdd(new Date()) + "T17:00:00Z")
                       }
                       onChange={(date: Date) => {
                         updateUserInfo({

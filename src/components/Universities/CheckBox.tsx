@@ -24,10 +24,11 @@ export default function CheckBox({
         if (myInterested) {
           await utils.university.getMyInterestedUniversities.cancel();
           previousUniData =
-            utils.university.getMyInterestedUniversities.getData();
+            utils.university.getMyInterestedUniversities.getInfiniteData();
         } else {
           await utils.university.getMyUniversities.cancel();
-          previousUniData = utils.university.getMyUniversities.getData();
+          previousUniData =
+            utils.university.getMyUniversities.getInfiniteData();
         }
         setAllUnis((prevAllUnis) => {
           let modifiedUniIndex = -1;
@@ -42,14 +43,6 @@ export default function CheckBox({
             }
             return uni;
           });
-          // const modifiedUniIndex = prevAllUnis.findIndex(
-          //   (prevUni) => prevUni.id === _uniId
-          // );
-          // if (modifiedUniIndex !== -1)
-          //   newAllUnis[modifiedUniIndex] = {
-          //     ...newAllUnis[modifiedUniIndex],
-          //     interested: !_interested,
-          //   };
           if (myInterested && _interested && modifiedUniIndex !== -1) {
             newAllUnis.splice(modifiedUniIndex, 1); // remove from myuniversities
           }
@@ -59,13 +52,13 @@ export default function CheckBox({
       },
       onError(_, __, context) {
         if (myInterested) {
-          utils.university.getMyInterestedUniversities.setData(
-            undefined,
+          utils.university.getMyInterestedUniversities.setInfiniteData(
+            {},
             context?.previousUniData
           );
         } else {
-          utils.university.getMyUniversities.setData(
-            undefined,
+          utils.university.getMyUniversities.setInfiniteData(
+            {},
             context?.previousUniData
           );
         }

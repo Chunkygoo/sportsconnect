@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   getMyInterestedUniversitiesSchema,
@@ -5,7 +6,101 @@ import {
   getPublicUniversitiesSchema,
   toggleInterestInUniSchema,
 } from "../../../schema/universities";
+import type { allUnisType } from "../../../types/GalleryItem";
+import type { UniversitiesType } from "../../../types/universities";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
+
+const conditionalQuery = (
+  input: UniversitiesType
+): Prisma.UniversityFindManyArgs => {
+  const nonConditionalsForQuery = {
+    take: input.limit + 1,
+    cursor: input.cursor ? { id: input.cursor } : undefined,
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      state: true,
+      conference: true,
+      division: true,
+      category: true,
+      region: true,
+      link: true,
+    },
+  };
+  const nonConditionalsForWhere: Prisma.UniversityWhereInput = {
+    state: {
+      equals:
+        input.state === "" || input.state === "all"
+          ? undefined // undefined means do nothing
+          : input.state,
+      mode: "insensitive",
+    },
+    conference: {
+      equals:
+        input.conference === "" || input.conference === "all"
+          ? undefined
+          : input.conference,
+      mode: "insensitive",
+    },
+    division: {
+      equals:
+        input.division === "" || input.division === "all"
+          ? undefined
+          : input.division,
+      mode: "insensitive",
+    },
+    category: {
+      equals:
+        input.category === "" || input.category === "all"
+          ? undefined
+          : input.category,
+      mode: "insensitive",
+    },
+    region: {
+      equals:
+        input.region === "" || input.region === "all"
+          ? undefined
+          : input.region,
+      mode: "insensitive",
+    },
+  };
+  if (input.search !== "") {
+    return {
+      ...nonConditionalsForQuery,
+      where: {
+        OR: [
+          {
+            name: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          },
+          {
+            city: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          },
+        ],
+        ...nonConditionalsForWhere,
+      },
+    };
+  }
+  return {
+    ...nonConditionalsForQuery,
+    where: { ...nonConditionalsForWhere },
+  };
+};
+
+const getNextCursor = (unis: allUnisType[], input: UniversitiesType) => {
+  let nextCursor: typeof input.cursor | undefined = undefined;
+  if (unis.length > input.limit) {
+    const nextUni = unis.pop();
+    nextCursor = nextUni?.id;
+  }
+  return nextCursor;
+};
 
 export const universityRouter = router({
   getPublicUniversities: publicProcedure
@@ -13,79 +108,11 @@ export const universityRouter = router({
     .query(async ({ ctx, input }) => {
       try {
         const unis = (
-          await ctx.prisma.university.findMany({
-            take: input.limit,
-            where: {
-              OR: [
-                {
-                  name: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-                {
-                  city: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-              ],
-              state: {
-                equals:
-                  input.state === "" || input.state === "all"
-                    ? undefined // undefined means do nothing
-                    : input.state,
-                mode: "insensitive",
-              },
-              conference: {
-                equals:
-                  input.conference === "" || input.conference === "all"
-                    ? undefined
-                    : input.conference,
-                mode: "insensitive",
-              },
-              division: {
-                equals:
-                  input.division === "" || input.division === "all"
-                    ? undefined
-                    : input.division,
-                mode: "insensitive",
-              },
-              category: {
-                equals:
-                  input.category === "" || input.category === "all"
-                    ? undefined
-                    : input.category,
-                mode: "insensitive",
-              },
-              region: {
-                equals:
-                  input.region === "" || input.region === "all"
-                    ? undefined
-                    : input.region,
-                mode: "insensitive",
-              },
-            },
-            cursor: input.cursor ? { id: input.cursor } : undefined,
-            select: {
-              id: true,
-              name: true,
-              city: true,
-              state: true,
-              conference: true,
-              division: true,
-              category: true,
-              region: true,
-              link: true,
-            },
-          })
+          await ctx.prisma.university.findMany(conditionalQuery(input))
         ).map((uni) => {
           return { ...uni, interested: false };
         });
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (unis.length > input.limit) {
-          nextCursor = unis[unis.length - 1]?.id;
-        }
+        const nextCursor = getNextCursor(unis, input);
         return {
           unis,
           nextCursor,
@@ -104,72 +131,7 @@ export const universityRouter = router({
       try {
         // Promise.all rejects faster https://stackoverflow.com/questions/46889290/waiting-for-more-than-one-concurrent-await-operation
         const [allUnis, myUnis] = await Promise.all([
-          ctx.prisma.university.findMany({
-            take: input.limit,
-            where: {
-              OR: [
-                {
-                  name: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-                {
-                  city: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-              ],
-              state: {
-                equals:
-                  input.state === "" || input.state === "all"
-                    ? undefined // undefined means do nothing
-                    : input.state,
-                mode: "insensitive",
-              },
-              conference: {
-                equals:
-                  input.conference === "" || input.conference === "all"
-                    ? undefined
-                    : input.conference,
-                mode: "insensitive",
-              },
-              division: {
-                equals:
-                  input.division === "" || input.division === "all"
-                    ? undefined
-                    : input.division,
-                mode: "insensitive",
-              },
-              category: {
-                equals:
-                  input.category === "" || input.category === "all"
-                    ? undefined
-                    : input.category,
-                mode: "insensitive",
-              },
-              region: {
-                equals:
-                  input.region === "" || input.region === "all"
-                    ? undefined
-                    : input.region,
-                mode: "insensitive",
-              },
-            },
-            cursor: input.cursor ? { id: input.cursor } : undefined,
-            select: {
-              id: true,
-              name: true,
-              city: true,
-              state: true,
-              conference: true,
-              division: true,
-              category: true,
-              region: true,
-              link: true,
-            },
-          }),
+          ctx.prisma.university.findMany(conditionalQuery(input)),
           ctx.prisma.userInfo.findUniqueOrThrow({
             where: {
               id: ctx.session?.getUserId(),
@@ -178,28 +140,17 @@ export const universityRouter = router({
           }),
         ]);
         const myUniIds = myUnis.unis.map((myUni) => {
-          return { id: myUni.id };
+          return myUni.id;
         });
         // hashSet for performance gain
         const myUniIdsHashSet = new Set(myUniIds);
-        // const myUniIdsHashMap = myUniIds.reduce(
-        //   (acc: Record<string, string>, myUniId) => {
-        //     acc[myUniId.id] = myUniId.id;
-        //     return acc;
-        //   },
-        //   {}
-        // );
         const unis = allUnis.map((uni) => {
-          if (uni.id in myUniIdsHashSet) {
+          if (myUniIdsHashSet.has(uni.id)) {
             return { ...uni, interested: true };
           }
           return { ...uni, interested: false };
         });
-
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (unis.length > input.limit) {
-          nextCursor = unis[unis.length - 1]?.id;
-        }
+        const nextCursor = getNextCursor(unis, input);
         return {
           unis,
           nextCursor,
@@ -216,86 +167,25 @@ export const universityRouter = router({
     .input(getMyInterestedUniversitiesSchema)
     .query(async ({ ctx, input }) => {
       try {
+        const queryResult = conditionalQuery(input);
+        const where = {
+          ...queryResult.where,
+          userInfo: {
+            // check the single uni's userInfo field and see if some of them has the id = ctx.session?.getUserId(),
+            some: {
+              id: ctx.session?.getUserId(),
+            },
+          },
+        };
         const unis = (
           await ctx.prisma.university.findMany({
-            take: input.limit,
-            where: {
-              OR: [
-                {
-                  name: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-                {
-                  city: {
-                    contains: input.search === "" ? undefined : input.search,
-                    mode: "insensitive",
-                  },
-                },
-              ],
-              state: {
-                equals:
-                  input.state === "" || input.state === "all"
-                    ? undefined // undefined means do nothing
-                    : input.state,
-                mode: "insensitive",
-              },
-              conference: {
-                equals:
-                  input.conference === "" || input.conference === "all"
-                    ? undefined
-                    : input.conference,
-                mode: "insensitive",
-              },
-              division: {
-                equals:
-                  input.division === "" || input.division === "all"
-                    ? undefined
-                    : input.division,
-                mode: "insensitive",
-              },
-              category: {
-                equals:
-                  input.category === "" || input.category === "all"
-                    ? undefined
-                    : input.category,
-                mode: "insensitive",
-              },
-              region: {
-                equals:
-                  input.region === "" || input.region === "all"
-                    ? undefined
-                    : input.region,
-                mode: "insensitive",
-              },
-              userInfo: {
-                // check the single uni's userInfo field and see if some of them has the id = ctx.session?.getUserId(),
-                some: {
-                  id: ctx.session?.getUserId(),
-                },
-              },
-            },
-            cursor: input.cursor ? { id: input.cursor } : undefined,
-            select: {
-              id: true,
-              name: true,
-              city: true,
-              state: true,
-              conference: true,
-              division: true,
-              category: true,
-              region: true,
-              link: true,
-            },
+            ...queryResult,
+            where: where,
           })
         ).map((uni) => {
           return { ...uni, interested: true };
         });
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (unis.length > input.limit) {
-          nextCursor = unis[unis.length - 1]?.id;
-        }
+        const nextCursor = getNextCursor(unis, input);
         return {
           unis,
           nextCursor,

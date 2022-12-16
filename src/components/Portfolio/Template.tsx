@@ -62,9 +62,9 @@ export default function Template({
                 description: datum.description || "",
                 startDate:
                   datum.startDate ||
-                  new Date(yymmdd(new Date()) + "T00:00:00Z"),
+                  new Date(yymmdd(new Date()) + "T17:00:00Z"),
                 endDate:
-                  datum.endDate || new Date(yymmdd(new Date()) + "T00:00:00Z"),
+                  datum.endDate || new Date(yymmdd(new Date()) + "T17:00:00Z"),
               };
               return (
                 <ItemRow

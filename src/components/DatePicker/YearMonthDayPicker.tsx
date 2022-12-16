@@ -15,6 +15,18 @@ export default function YearMonthDayPicker({
     const size = to - from + 1;
     return [...Array(size).keys()].map((i) => from + i);
   };
+
+  const getUTCDate = (date: Date) => {
+    // force ReactDatePicker to use UTC: https://github.com/Hacker0x01/react-datepicker/issues/1787#issuecomment-1295771383
+    const applyOffset = date.setTime(
+      date.getTime() - 480 * 60_000 // 480 is the time (minutes) offset of Mountain View, * 60_000 to convert to ms
+    );
+    const actualTime = new Date(applyOffset).toISOString().replace("Z", "");
+    const toTz = momentt.tz(actualTime, "America/Los_Angeles").format(); // Mountain View is in the America/Los_Angeles timezone
+    const getUTCTime = momentt.utc(toTz).format();
+    return new Date(getUTCTime);
+  };
+
   const years = range(1920, new Date().getFullYear());
   const months = [
     "January",
@@ -32,24 +44,12 @@ export default function YearMonthDayPicker({
   ];
   const [updatedDateWithTimezone, setUpdatedDateWithTimezone] =
     useState(selected);
-
   return (
     <ReactDatePicker
       disabled={isDisabled}
-      // selected={selected}
-      // onChange={onChange}
       selected={updatedDateWithTimezone}
       onChange={(date: Date) => {
-        // force ReactDatePicker to use UTC: https://github.com/Hacker0x01/react-datepicker/issues/1787#issuecomment-1295771383
-        const applyOffset = date.setTime(
-          date.getTime() - date.getTimezoneOffset() * 60_000 // getTimezoneOffset returns minutes, * 60_000 to convert to ms
-        );
-        const actualTime = new Date(applyOffset).toISOString().replace("Z", "");
-        const toTz = momentt
-          .tz(actualTime, Intl.DateTimeFormat().resolvedOptions().timeZone)
-          .format();
-        const getUTCTime = momentt.utc(toTz).format();
-        const newUpdatedDateWithTimezone = new Date(getUTCTime);
+        const newUpdatedDateWithTimezone = getUTCDate(date);
         if (onChange(newUpdatedDateWithTimezone)) {
           setUpdatedDateWithTimezone(newUpdatedDateWithTimezone);
         }

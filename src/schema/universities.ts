@@ -7,7 +7,6 @@ export const getPublicUniversitiesSchema = z.object({
   division: z.string().default(""),
   category: z.string().default(""),
   region: z.string().default(""),
-  link: z.string().default(""),
   cursor: z.string().default("").nullish(),
   limit: z.number().min(1).max(100).default(9),
 });
@@ -19,7 +18,6 @@ export const getMyUniversitiesSchema = z.object({
   division: z.string().default(""),
   category: z.string().default(""),
   region: z.string().default(""),
-  link: z.string().default(""),
   cursor: z.string().default("").nullish(),
   limit: z.number().min(1).max(100).default(9),
 });
@@ -31,7 +29,6 @@ export const getMyInterestedUniversitiesSchema = z.object({
   division: z.string().default(""),
   category: z.string().default(""),
   region: z.string().default(""),
-  link: z.string().default(""),
   cursor: z.string().default("").nullish(),
   limit: z.number().min(1).max(100).default(9),
 });

@@ -29,7 +29,9 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   const session = await getServerAuthSession({ req, res });
-
+  if (!session) {
+    return await createContextInner({}); // unauthenticated
+  }
   return await createContextInner({
     session,
   });

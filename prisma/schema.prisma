@@ -21,9 +21,10 @@ model UserInfo {
   contactNumber    String?
   currentAddress   String?
   permanentAddress String?
-  birthday         DateTime?     @db.Date
-  createdAt        DateTime      @default(now())
+  birthday         DateTime?
   public           Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   experiences      Experience[]
   educations       Education[]
   profilePhoto     ProfilePhoto?
@@ -35,9 +36,10 @@ model Experience {
   id          String    @id @default(cuid())
   description String?
   active      Boolean?  @default(false)
-  startDate   DateTime? @db.Date
-  endDate     DateTime? @db.Date
+  startDate   DateTime?
+  endDate     DateTime?
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   owner       UserInfo  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
 }
@@ -46,9 +48,10 @@ model Education {
   id          String    @id @default(cuid())
   description String?
   active      Boolean?  @default(false)
-  startDate   DateTime? @db.Date
-  endDate     DateTime? @db.Date
+  startDate   DateTime?
+  endDate     DateTime?
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   owner       UserInfo  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
 }
@@ -58,6 +61,8 @@ model ProfilePhoto {
   key        String
   userInfo   UserInfo @relation(fields: [userInfoId], references: [id], onDelete: Cascade)
   userInfoId String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model University {
@@ -71,6 +76,7 @@ model University {
   region     String
   link       String
   createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   userInfo   UserInfo[]
 }
 
