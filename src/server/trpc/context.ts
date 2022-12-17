@@ -16,10 +16,13 @@ type CreateContextOptions = Record<string, SessionContainer>;
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
-  };
+  if (opts.session) {
+    return {
+      session: opts.session,
+      prisma,
+    };
+  }
+  return { prisma };
 };
 
 /**

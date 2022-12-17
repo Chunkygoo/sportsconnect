@@ -10,7 +10,7 @@ export const userInfoRouter = router({
     try {
       return await ctx.prisma.userInfo.findUniqueOrThrow({
         where: {
-          id: ctx.session?.getUserId(),
+          id: ctx.session.getUserId(),
         },
         select: {
           id: true,
@@ -46,7 +46,7 @@ export const userInfoRouter = router({
       try {
         await ctx.prisma.userInfo.update({
           where: {
-            id: ctx.session?.getUserId(),
+            id: ctx.session.getUserId(),
           },
           data: {
             name: input.name,

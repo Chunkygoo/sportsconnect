@@ -30,6 +30,7 @@ export const getServerAuthSession = async (ctx: {
     ) {
       return null; // null is returned as the sesion object
     }
+    console.log(error);
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Random error occurred - should never get here",

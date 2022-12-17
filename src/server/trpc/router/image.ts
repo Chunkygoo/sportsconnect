@@ -104,7 +104,7 @@ export const imageRouter = router({
         // create if not exists, else update
         await ctx.prisma.userInfo.update({
           where: {
-            id: ctx.session?.getUserId(),
+            id: ctx.session.getUserId(),
           },
           data: {
             profilePhoto: {

@@ -134,13 +134,13 @@ export const universityRouter = router({
           ctx.prisma.university.findMany(conditionalQuery(input)),
           ctx.prisma.userInfo.findUniqueOrThrow({
             where: {
-              id: ctx.session?.getUserId(),
+              id: ctx.session.getUserId(),
             },
             select: { unis: true },
           }),
         ]);
         const myUniIds = myUnis.unis.map((myUni) => {
-          return myUni.id;
+          return myUni.universityId;
         });
         // hashSet for performance gain
         const myUniIdsHashSet = new Set(myUniIds);
@@ -171,9 +171,9 @@ export const universityRouter = router({
         const where = {
           ...queryResult.where,
           userInfo: {
-            // check the single uni's userInfo field and see if some of them has the id = ctx.session?.getUserId(),
+            // check the single uni's userInfo field and see if some of them has the id = ctx.session.getUserId(),
             some: {
-              id: ctx.session?.getUserId(),
+              userInfoId: ctx.session.getUserId(),
             },
           },
         };
@@ -203,29 +203,47 @@ export const universityRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         if (input.interested) {
-          await ctx.prisma.userInfo.update({
+          // implicit many to many connect
+          // await ctx.prisma.userInfo.update({
+          //   where: {
+          //     id: ctx.session.getUserId(),
+          //   },
+          //   data: {
+          //     unis: {
+          //       disconnect: {
+          //         id: input.uniId,
+          //       },
+          //     },
+          //   },
+          // });
+          // Delete a connection with explicit many to many with composite key: https://stackoverflow.com/a/74007143, https://stackoverflow.com/a/68674033
+          await ctx.prisma.userInfoOnUnis.delete({
             where: {
-              id: ctx.session?.getUserId(),
-            },
-            data: {
-              unis: {
-                disconnect: {
-                  id: input.uniId,
-                },
+              userInfoId_universityId: {
+                userInfoId: ctx.session.getUserId(),
+                universityId: input.uniId,
               },
             },
           });
         } else {
-          await ctx.prisma.userInfo.update({
-            where: {
-              id: ctx.session?.getUserId(),
-            },
+          // implicit many to many disconnect
+          // await ctx.prisma.userInfo.update({
+          //   where: {
+          //     id: ctx.session.getUserId(),
+          //   },
+          //   data: {
+          //     unis: {
+          //       connect: {
+          //         id: input.uniId,
+          //       },
+          //     },
+          //   },
+          // });
+          // Make a connection with explicit many to many with composite key
+          await ctx.prisma.userInfoOnUnis.create({
             data: {
-              unis: {
-                connect: {
-                  id: input.uniId,
-                },
-              },
+              userInfoId: ctx.session.getUserId(),
+              universityId: input.uniId,
             },
           });
         }
