@@ -19,6 +19,7 @@ if (typeof window !== "undefined") {
   SuperTokensReact.init(frontendConfig);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MyApp: any = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const [prefetchedPreLoggedIn, setPrefetchedPreLoggedIn] = useState(false);

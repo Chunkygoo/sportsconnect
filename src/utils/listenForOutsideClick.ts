@@ -1,7 +1,9 @@
+import type { MutableRefObject } from "react";
+
 export default function listenForOutsideClick(
   listening: boolean,
   setListening: React.Dispatch<React.SetStateAction<boolean>>,
-  ref: any,
+  ref: MutableRefObject<HTMLElement | null>,
   clickedOutsideCallback: () => void
 ) {
   return () => {
@@ -9,7 +11,8 @@ export default function listenForOutsideClick(
     if (!ref.current || !ref) return;
     setListening(true);
     document.addEventListener(`click`, (evt) => {
-      if (ref?.current?.contains(evt.target)) return;
+      if (evt.target instanceof Node && ref?.current?.contains(evt.target))
+        return;
       clickedOutsideCallback();
     });
   };

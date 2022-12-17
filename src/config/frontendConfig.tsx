@@ -5,6 +5,7 @@ import SessionReact from "supertokens-auth-react/recipe/session";
 import ThirdPartyEmailPassword, {
   Google,
 } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import type { WindowHandlerInterface } from "supertokens-website/utils/windowHandler/types";
 import { appInfo } from "./appInfo";
 
 export const frontendConfig = {
@@ -313,7 +314,7 @@ export const frontendConfig = {
     defaultLanguage: "en",
   },
   // this is so that the SDK uses the next router for navigation
-  windowHandler: (oI: any) => {
+  windowHandler: (oI: WindowHandlerInterface) => {
     return {
       ...oI,
       location: {
