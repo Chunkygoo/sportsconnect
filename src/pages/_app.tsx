@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import { useIdleTimer } from "react-idle-timer";
 import { toast } from "react-toastify";
 import i18nConfig from "../../i18n.mjs";
-import MyHead from "../components/Meta/MyHead";
 import Layout from "../components/Shared/Layout";
 import "../styles/globals.css";
 import { trpc } from "../utils/trpc";
@@ -21,6 +20,7 @@ if (typeof window !== "undefined") {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MyApp: any = ({ Component, pageProps }: AppProps) => {
+  // function MyApp({ Component, pageProps }: AppProps): any {
   const router = useRouter();
   const [prefetchedPreLoggedIn, setPrefetchedPreLoggedIn] = useState(false);
   const [prefetchedPostLoggedIn, setPrefetchedPostLoggedIn] = useState(false);
@@ -124,7 +124,6 @@ const MyApp: any = ({ Component, pageProps }: AppProps) => {
   }
   return (
     <Fragment>
-      <MyHead />
       <Layout>
         <Component {...pageProps} />
       </Layout>
@@ -136,4 +135,5 @@ const i18nApp = appWithI18n(MyApp, {
   ...i18nConfig,
   skipInitialProps: true,
 });
+
 export default trpc.withTRPC(i18nApp);

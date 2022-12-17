@@ -1,4 +1,3 @@
-// import S3FileUpload from "react-s3";
 import { TRPCError } from "@trpc/server";
 import S3 from "aws-sdk/clients/s3";
 import { randomUUID } from "crypto";

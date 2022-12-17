@@ -42,13 +42,13 @@ export default function Modal({
                     <h3 className="text-3xl font-semibold">{title}</h3>
                   </div>
                   <div className="relative flex-auto p-6">
-                    <p className="my-4 text-lg leading-relaxed text-slate-500">
+                    <div className="my-4 text-lg leading-relaxed text-slate-500">
                       {description}
-                    </p>
+                    </div>
                     {link && (
-                      <p className="my-4 text-lg leading-relaxed text-blue-500 underline">
+                      <div className="my-4 text-lg leading-relaxed text-blue-500 underline">
                         {link}
-                      </p>
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">

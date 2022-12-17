@@ -10,7 +10,7 @@ import nextTranslate from "next-translate";
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false, // true results in a bug in prod: https://github.com/vercel/next.js/issues/36221
   images: {
     // domains: ["sportsconnect-profilephotos.s3.amazonaws.com"],
     unoptimized: true,
