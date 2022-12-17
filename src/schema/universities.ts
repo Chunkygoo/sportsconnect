@@ -1,35 +1,35 @@
 import { z } from "zod";
 
 export const getPublicUniversitiesSchema = z.object({
-  search: z.string().default(""),
-  state: z.string().default(""),
-  conference: z.string().default(""),
-  division: z.string().default(""),
-  category: z.string().default(""),
-  region: z.string().default(""),
-  cursor: z.string().default("").nullish(),
+  search: z.string(),
+  state: z.string(),
+  conference: z.string(),
+  division: z.string(),
+  category: z.string(),
+  region: z.string(),
+  cursor: z.string().nullish(),
   limit: z.number().min(1).max(100).default(9),
 });
 
 export const getMyUniversitiesSchema = z.object({
-  search: z.string().default(""),
-  state: z.string().default(""),
-  conference: z.string().default(""),
-  division: z.string().default(""),
-  category: z.string().default(""),
-  region: z.string().default(""),
-  cursor: z.string().default("").nullish(),
+  search: z.string(),
+  state: z.string(),
+  conference: z.string(),
+  division: z.string(),
+  category: z.string(),
+  region: z.string(),
+  cursor: z.string().nullish(),
   limit: z.number().min(1).max(100).default(9),
 });
 
 export const getMyInterestedUniversitiesSchema = z.object({
-  search: z.string().default(""),
-  state: z.string().default(""),
-  conference: z.string().default(""),
-  division: z.string().default(""),
-  category: z.string().default(""),
-  region: z.string().default(""),
-  cursor: z.string().default("").nullish(),
+  search: z.string(),
+  state: z.string(),
+  conference: z.string(),
+  division: z.string(),
+  category: z.string(),
+  region: z.string(),
+  cursor: z.string().nullish(),
   limit: z.number().min(1).max(100).default(9),
 });
 

@@ -21,9 +21,14 @@ export const getServerAuthSession = async (ctx: {
           message: error.type,
           cause: error,
         });
-      } else if (error.type === Session.Error.UNAUTHORISED) {
-        return null;
       }
+    }
+    if (
+      error instanceof Error &&
+      error.message ===
+        "Initialisation not done. Did you forget to call the SuperTokens.init function?" // Unauthenticated
+    ) {
+      return null; // null is returned as the sesion object
     }
     throw new TRPCError({
       code: "FORBIDDEN",

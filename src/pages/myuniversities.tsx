@@ -21,37 +21,6 @@ export default function MyUniversities() {
   }
 }
 
-// export async function getServerSideProps(context) {
-//   let cookieString = '';
-//   for (var key of Object.keys(context.req.cookies)) {
-//     cookieString += key + '=' + context.req.cookies[key] + '; ';
-//   }
-//   try {
-//     let myAxios = await myAxiosPrivate();
-//     var res = await myAxios
-//       .get(`/universities/interested_only?limit=-1`, {
-//         headers: {
-//           Cookie: cookieString,
-//         },
-//       })
-//       .catch((e) => {
-//         throw new Error(e);
-//       });
-//     if (res.status === 401) {
-//       return { props: { fromSupertokens: 'needs-refresh' } };
-//     }
-//     return {
-//       props: {
-//         _res: { data: res.data, status: res.status },
-//       },
-//     };
-//   } catch (error) {
-//     if (error.message !== 'CanceledError: canceled') {
-//       throw new Error(e);
-//     }
-//   }
-// }
-
 export async function getStaticProps(staticProps: GetStaticProps) {
   return {
     props: await loadNamespaces({

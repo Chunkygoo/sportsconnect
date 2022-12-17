@@ -20,16 +20,6 @@ export default function CheckBox({
   const { mutate: toggleInterestInUni } =
     trpc.university.toggleInterestInUni.useMutation({
       async onMutate({ uniId: _uniId, interested: _interested }) {
-        let previousUniData;
-        if (myInterested) {
-          await utils.university.getMyInterestedUniversities.cancel();
-          previousUniData =
-            utils.university.getMyInterestedUniversities.getInfiniteData();
-        } else {
-          await utils.university.getMyUniversities.cancel();
-          previousUniData =
-            utils.university.getMyUniversities.getInfiniteData();
-        }
         setAllUnis((prevAllUnis) => {
           let modifiedUniIndex = -1;
           let newAllUnis = [...prevAllUnis];
@@ -48,20 +38,8 @@ export default function CheckBox({
           }
           return newAllUnis;
         });
-        return { previousUniData };
       },
-      onError(_, __, context) {
-        if (myInterested) {
-          utils.university.getMyInterestedUniversities.setInfiniteData(
-            {},
-            context?.previousUniData
-          );
-        } else {
-          utils.university.getMyUniversities.setInfiniteData(
-            {},
-            context?.previousUniData
-          );
-        }
+      onError() {
         toast.error("An error occured while updating your data", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });

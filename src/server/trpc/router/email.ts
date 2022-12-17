@@ -55,10 +55,7 @@ export const emailRouter = router({
     };
     try {
       const ses = new SES(sesConfig);
-      const sendEmail = ses.sendEmail(params).promise();
-      sendEmail.then((data) => {
-        console.log(data);
-      });
+      ses.sendEmail(params).promise();
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",

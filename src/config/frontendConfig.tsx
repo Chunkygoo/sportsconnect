@@ -25,7 +25,6 @@ export const frontendConfig = {
         functions: (originalImplementation) => {
           return {
             ...originalImplementation,
-
             // we will only be overriding what happens when a user
             // clicks the sign in or sign up button.
             getAuthorisationURLWithQueryParamsAndSetState: async function (
@@ -95,24 +94,22 @@ export const frontendConfig = {
             // we are navigating back to where the user was before they authenticated
             return context.redirectToPath;
           }
+
           // For Google login, we need a workaround because Router.locale will always be the default upon successful login.
-          // Hence, we use localStorage in _app.js, LanguageDropdown.js, frontendConfig.js and home.js to redirect and set
-          // the right locale
-          if (localStorage.getItem("lang") === "en-US") {
-            toast.success("Welcome back!", {
-              position: toast.POSITION.BOTTOM_RIGHT,
-              delay: 500,
-            }); // Without timeout, emailpassword login somehow dismisses the toast upon redirect
-            return "/home"; // must redirect to home.js because that is where router.locale gets updated
-          } else if (localStorage.getItem("lang") === "zh") {
+          // Hence, we use localStorage
+          if (localStorage.getItem("lang") === "zh") {
             toast.success("欢迎！", {
               position: toast.POSITION.BOTTOM_RIGHT,
-              delay: 500,
             });
-            return "/zh/home"; // must redirect to home.js because that is where router.locale gets updated
+            return "/zh/home";
+          } else {
+            // all other cases, including localStorage.getItem("lang") is null (user never picked language) and "en-US", we use english (default)
+            toast.success("Welcome back!", {
+              position: toast.POSITION.BOTTOM_RIGHT,
+            });
+            return "/home";
           }
         }
-        return undefined;
       },
     }),
   ],

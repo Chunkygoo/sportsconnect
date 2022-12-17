@@ -1,4 +1,5 @@
 import useTranslation from "next-translate/useTranslation";
+import { Router } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { DebounceInput } from "react-debounce-input";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -23,13 +24,26 @@ export default function UniversitiesGallery({
   publicUnis,
 }: UniversitiesGallery) {
   const [searchNameOrCity, setSearchNameOrCity] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(cateGoryOptions[0]);
-  const [selectedDivision, setSelectedDivision] = useState(divisionOptions[0]);
-  const [selectedConference, setSelectedConference] = useState(
-    conferenceOptions[0]
-  );
-  const [selectedState, setSelectedState] = useState(stateOptions[0]);
-  const [selectedRegion, setSelectedRegion] = useState(regionOptions[0]);
+  const [selectedCategory, setSelectedCategory] = useState({
+    value: "all",
+    label: "All",
+  });
+  const [selectedDivision, setSelectedDivision] = useState({
+    value: "all",
+    label: "All",
+  });
+  const [selectedConference, setSelectedConference] = useState({
+    value: "all",
+    label: "All",
+  });
+  const [selectedState, setSelectedState] = useState({
+    value: "all",
+    label: "All",
+  });
+  const [selectedRegion, setSelectedRegion] = useState({
+    value: "all",
+    label: "All",
+  });
   const toastId = useRef("");
   const { t } = useTranslation();
   const {
@@ -40,11 +54,11 @@ export default function UniversitiesGallery({
   } = trpc.university.getPublicUniversities.useInfiniteQuery(
     {
       search: searchNameOrCity,
-      state: selectedState?.value,
-      conference: selectedConference?.value,
-      division: selectedDivision?.value,
-      category: selectedCategory?.value,
-      region: selectedRegion?.value,
+      state: selectedState.value,
+      conference: selectedConference.value,
+      division: selectedDivision.value,
+      category: selectedCategory.value,
+      region: selectedRegion.value,
       limit: 12,
     },
     {
@@ -63,11 +77,11 @@ export default function UniversitiesGallery({
   } = trpc.university.getMyUniversities.useInfiniteQuery(
     {
       search: searchNameOrCity,
-      state: selectedState?.value,
-      conference: selectedConference?.value,
-      division: selectedDivision?.value,
-      category: selectedCategory?.value,
-      region: selectedRegion?.value,
+      state: selectedState.value,
+      conference: selectedConference.value,
+      division: selectedDivision.value,
+      category: selectedCategory.value,
+      region: selectedRegion.value,
       limit: 12,
     },
     {
@@ -86,11 +100,11 @@ export default function UniversitiesGallery({
   } = trpc.university.getMyInterestedUniversities.useInfiniteQuery(
     {
       search: searchNameOrCity,
-      state: selectedState?.value,
-      conference: selectedConference?.value,
-      division: selectedDivision?.value,
-      category: selectedCategory?.value,
-      region: selectedRegion?.value,
+      state: selectedState.value,
+      conference: selectedConference.value,
+      division: selectedDivision.value,
+      category: selectedCategory.value,
+      region: selectedRegion.value,
       limit: 12,
     },
     {
@@ -155,6 +169,10 @@ export default function UniversitiesGallery({
         }
       )
     ));
+
+  Router.events.on("routeChangeStart", () => {
+    toast.dismiss(toastId.current);
+  });
 
   useEffect(() => {
     const toggleScrollToTop = () => {

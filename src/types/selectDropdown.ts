@@ -1,6 +1,6 @@
 export type selectDropdownType = {
-  selected: optionType | undefined;
-  setSelected: React.Dispatch<React.SetStateAction<optionType | undefined>>;
+  selected: optionType;
+  setSelected: React.Dispatch<React.SetStateAction<optionType>>;
   options: optionType[] | undefined;
   label: string;
   className: string;
