@@ -34,35 +34,35 @@ const conditionalQuery = (
         input.state === "" || input.state === "all"
           ? undefined // undefined means do nothing
           : input.state,
-      mode: "insensitive",
+      //mode: "insensitive", // only need this if using Postgresql
     },
     conference: {
       equals:
         input.conference === "" || input.conference === "all"
           ? undefined
           : input.conference,
-      mode: "insensitive",
+      //mode: "insensitive",
     },
     division: {
       equals:
         input.division === "" || input.division === "all"
           ? undefined
           : input.division,
-      mode: "insensitive",
+      //mode: "insensitive",
     },
     category: {
       equals:
         input.category === "" || input.category === "all"
           ? undefined
           : input.category,
-      mode: "insensitive",
+      //mode: "insensitive",
     },
     region: {
       equals:
         input.region === "" || input.region === "all"
           ? undefined
           : input.region,
-      mode: "insensitive",
+      //mode: "insensitive",
     },
   };
   if (input.search !== "") {
@@ -73,13 +73,13 @@ const conditionalQuery = (
           {
             name: {
               contains: input.search,
-              mode: "insensitive",
+              //mode: "insensitive",
             },
           },
           {
             city: {
               contains: input.search,
-              mode: "insensitive",
+              //mode: "insensitive",
             },
           },
         ],

@@ -117,7 +117,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   (loading ? (
                     <svg
                       aria-hidden="true"
-                      className="mx-auto mb-2 h-8 w-8 animate-spin fill-blue-600 text-gray-200"
+                      className="mx-auto mb-1 mt-1 h-8 w-8 animate-spin fill-blue-600 text-gray-200"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -416,7 +416,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                         });
                         return true;
                       }}
-                      className="w-full border-0 border-b-2 border-gray-200 bg-transparent pb-2 focus:border-black focus:outline-none focus:ring-0"
+                      className="w-full border-0 border-b-2 border-gray-200 bg-transparent pb-2 text-black focus:border-black focus:outline-none focus:ring-0"
                       wrapperClassName=""
                     />
                   </div>

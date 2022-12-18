@@ -47,7 +47,7 @@ textarea:focus ~ label {
 }
 /* End "For portfolio input" */
 
-input:disabled {
+/* input:disabled {
   color: black;
   --webkit-text-fill-color: black;
   opacity: 1;
@@ -57,7 +57,7 @@ textarea:disabled {
   color: black;
   --webkit-text-fill-color: black;
   opacity: 1;
-}
+} */
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .infinite-scroll-hide::-webkit-scrollbar {
@@ -70,6 +70,6 @@ textarea:disabled {
   scrollbar-width: none; /* Firefox */
 }
 
-.react-datepicker__input-container > input:disabled {
+/*.react-datepicker__input-container > input:disabled {
   color: grey;
-}
+}*/

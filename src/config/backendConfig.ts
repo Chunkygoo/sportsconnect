@@ -30,7 +30,7 @@ export const backendConfig = (): TypeInput => {
                   input
                 );
                 if (res.createdNewUser) {
-                  // don't user OK here as we the below logic to run only for signUp
+                  // Only run the below logic for signUp, not signIn
                   try {
                     // created user, we need to create a new userInfo record for that user
                     await prisma.userInfo.create({

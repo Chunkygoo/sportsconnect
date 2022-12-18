@@ -21,6 +21,14 @@ export const getServerAuthSession = async (ctx: {
           message: error.type,
           cause: error,
         });
+      } else if (
+        error.type === "UNAUTHORISED" &&
+        error.message ===
+          "Session does not exist. Are you sending the session tokens in the request as cookies?"
+      ) {
+        //  happens when the user logs in at least once and then logs out === unauthenticated
+        return null; // null is returned as the sesion object. getServerAuthSession is called everytime an API is hit even if the user is not logged in. If the user has not
+        // logged in and Session.getSession(req, res); is called, this error will occur. But this error is expected so we return null to indicate the user is not logged in
       }
     }
     if (
@@ -28,9 +36,9 @@ export const getServerAuthSession = async (ctx: {
       error.message ===
         "Initialisation not done. Did you forget to call the SuperTokens.init function?" // Unauthenticated
     ) {
+      //  happens when the user has not logged in even once
       return null; // null is returned as the sesion object
     }
-    console.log(error);
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Random error occurred - should never get here",
