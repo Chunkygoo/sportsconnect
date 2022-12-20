@@ -22,7 +22,6 @@ export default function Hero() {
           <Link href="/steps">
             <span className="mt-4 inline-flex items-center justify-center rounded-lg border border-gray-300 px-2 py-3 text-center text-base font-medium text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 sm:px-4">
               {t("home:card_0_text_3")}
-              Show me xxx
             </span>
           </Link>
         </div>
