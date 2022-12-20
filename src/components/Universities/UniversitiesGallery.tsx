@@ -63,7 +63,9 @@ export default function UniversitiesGallery({
     },
     {
       onSuccess(data) {
-        setAllUnis(data.pages.flatMap((page) => page.unis));
+        // prefetching triggers on success too
+        if (publicUnis && !myInterested)
+          setAllUnis(data.pages.flatMap((page) => page.unis));
       },
       enabled: publicUnis && !myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -86,7 +88,8 @@ export default function UniversitiesGallery({
     },
     {
       onSuccess(data) {
-        setAllUnis(data.pages.flatMap((page) => page.unis));
+        if (!publicUnis && !myInterested)
+          setAllUnis(data.pages.flatMap((page) => page.unis));
       },
       enabled: !publicUnis && !myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -109,7 +112,8 @@ export default function UniversitiesGallery({
     },
     {
       onSuccess(data) {
-        setAllUnis(data.pages.flatMap((page) => page.unis));
+        if (!publicUnis && myInterested)
+          setAllUnis(data.pages.flatMap((page) => page.unis));
       },
       enabled: !publicUnis && myInterested,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -153,12 +157,13 @@ export default function UniversitiesGallery({
     (toastId.current = String(
       toast(
         <span
-          onClick={() =>
+          onClick={() => {
             window.scrollTo({
               top: 0,
               behavior: "smooth",
-            })
-          }
+            });
+            toast.dismiss(toastId.current);
+          }}
         >
           Click me to go back to the top ⬆️⬆️⬆️
         </span>,
@@ -166,6 +171,7 @@ export default function UniversitiesGallery({
           autoClose: false,
           closeButton: false,
           position: toast.POSITION.BOTTOM_RIGHT,
+          closeOnClick: false,
         }
       )
     ));
@@ -319,27 +325,38 @@ export default function UniversitiesGallery({
           loader={<Spinner />}
         >
           {chunk(searchedUnis, 3).map((uniChunk) => (
-            <section
-              key={uniChunk[0]?.id}
-              className="overflow-hidden text-gray-700 "
-            >
-              <div className="mx-auto px-5 py-2 xl:px-3">
-                <div className="m-1 flex flex-wrap">
-                  {uniChunk.map((uniChunkBit) => {
-                    return (
-                      uniChunkBit && (
-                        <GalleryItem
-                          key={uniChunkBit.id}
-                          datum={uniChunkBit}
-                          setAllUnis={setAllUnis}
-                          myInterested={myInterested}
-                        />
-                      )
-                    );
-                  })}
+            <div key={uniChunk[0]?.id}>
+              <section className="overflow-hidden text-gray-700 ">
+                <div className="mx-auto px-5 py-2 xl:px-3">
+                  <div className="m-1 flex flex-wrap">
+                    {uniChunk[0] && (
+                      <GalleryItem
+                        key={uniChunk[0].id}
+                        datum={uniChunk[0]}
+                        setAllUnis={setAllUnis}
+                        myInterested={myInterested}
+                      />
+                    )}
+                    {uniChunk[1] && (
+                      <GalleryItem
+                        key={uniChunk[1].id}
+                        datum={uniChunk[1]}
+                        setAllUnis={setAllUnis}
+                        myInterested={myInterested}
+                      />
+                    )}
+                    {uniChunk[2] && (
+                      <GalleryItem
+                        key={uniChunk[2].id}
+                        datum={uniChunk[2]}
+                        setAllUnis={setAllUnis}
+                        myInterested={myInterested}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
           ))}
         </InfiniteScroll>
       )}

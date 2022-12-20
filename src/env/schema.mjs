@@ -6,7 +6,7 @@ import { z } from "zod";
  * This way you can ensure the app isn't built with invalid env vars.
  */
 export const serverSchema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]),
+  NODE_ENV: z.enum(["development", "test", "production"]), // this gets set by NextJS
   DATABASE_URL: z.string().url(),
   MAIL_FROM: z.string(),
   MAIL_TO: z.string(),

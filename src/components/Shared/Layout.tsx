@@ -17,9 +17,11 @@ export default function Layout({ children }: layoutType) {
   return (
     <SuperTokensWrapper>
       <MyHead />
-      <Header />
-      {children}
-      <Footer />
+      <div className="min-h-screen">
+        <Header />
+        {children}
+        <Footer />
+      </div>
       <Offline>
         <Modal
           initialShow={true}

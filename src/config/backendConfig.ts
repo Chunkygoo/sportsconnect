@@ -7,7 +7,6 @@ import ThirdPartyEmailPasswordNode from "supertokens-node/recipe/thirdpartyemail
 import type { TypeInput } from "supertokens-node/types";
 import { env } from "../env/server.mjs";
 import { prisma } from "../server/db/client";
-import { appInfo } from "./appInfo";
 
 export const backendConfig = (): TypeInput => {
   return {
@@ -16,7 +15,13 @@ export const backendConfig = (): TypeInput => {
       connectionURI: env.SUPERTOKENS_CONNECTION_URI,
       apiKey: env.SUPERTOKENS_API_KEY,
     },
-    appInfo,
+    appInfo: {
+      appName: "SportsConnect",
+      apiDomain: env.NEXT_PUBLIC_APP_URL,
+      websiteDomain: env.NEXT_PUBLIC_APP_URL,
+      apiBasePath: "/api/auth",
+      websiteBasePath: "/auth",
+    },
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         override: {

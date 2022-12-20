@@ -9,13 +9,15 @@ import { useRouter } from "next/router";
 import { useIdleTimer } from "react-idle-timer";
 import { toast } from "react-toastify";
 import i18nConfig from "../../i18n.mjs";
+// import i18nConfig from "../../i18n.cjs";
+
 import Layout from "../components/Shared/Layout";
 import "../styles/globals.css";
 import { trpc } from "../utils/trpc";
 
 if (typeof window !== "undefined") {
   // we only want to call this init function on the frontend, so we check typeof window !== 'undefined'
-  SuperTokensReact.init(frontendConfig);
+  SuperTokensReact.init(frontendConfig());
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,9 +108,9 @@ const MyApp: any = ({ Component, pageProps }: AppProps) => {
           await utils.university.getMyUniversities.prefetchInfinite(
             dummyInfiniteInput
           );
-          await utils.university.getMyInterestedUniversities.prefetchInfinite(
-            dummyInfiniteInput
-          );
+          await utils.university.getMyInterestedUniversities.prefetchInfinite({
+            ...dummyInfiniteInput,
+          });
           setPrefetchedPostLoggedIn(true);
         }
       } catch (error) {
@@ -116,7 +118,7 @@ const MyApp: any = ({ Component, pageProps }: AppProps) => {
       }
     };
     prefetchQueries();
-  }); // run this effect everytime
+  }); // run this effect everytime _app renders because we want to prefetch for both logged in and guest users.
 
   if (router.asPath.includes("/auth/callback/google")) {
     // for Google login redirect

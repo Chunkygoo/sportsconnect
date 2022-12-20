@@ -51,14 +51,20 @@ export const experienceRouter = router({
     }),
   getExperiences: protectedProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.prisma.experience.findMany({
-        where: {
-          ownerId: ctx.session.getUserId(),
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      });
+      return (
+        await ctx.prisma.userInfo.findUniqueOrThrow({
+          where: {
+            id: ctx.session.getUserId(),
+          },
+          select: {
+            experiences: {
+              orderBy: {
+                createdAt: "asc",
+              },
+            },
+          },
+        })
+      ).experiences;
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",

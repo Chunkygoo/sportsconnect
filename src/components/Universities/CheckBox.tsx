@@ -69,7 +69,7 @@ export default function CheckBox({
             interested: interested,
           });
         } else {
-          router.push("/auth/loginsignup");
+          router.push("/auth/loginsignup?from=sessionAuth");
         }
       }}
     >

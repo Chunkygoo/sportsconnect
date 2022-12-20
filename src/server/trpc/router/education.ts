@@ -51,14 +51,20 @@ export const educationRouter = router({
     }),
   getEducations: protectedProcedure.query(async ({ ctx }) => {
     try {
-      return await ctx.prisma.education.findMany({
-        where: {
-          ownerId: ctx.session.getUserId(),
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      });
+      return (
+        await ctx.prisma.userInfo.findUniqueOrThrow({
+          where: {
+            id: ctx.session.getUserId(),
+          },
+          select: {
+            educations: {
+              orderBy: {
+                createdAt: "asc",
+              },
+            },
+          },
+        })
+      ).educations;
     } catch (error) {
       throw new TRPCError({
         code: "BAD_REQUEST",

@@ -160,6 +160,7 @@ export default function CropImage({
           crop={crop}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           onComplete={(c) => setCompletedCrop(c)}
+          className="max-h-96"
         >
           {imgSrc && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -201,7 +202,7 @@ export default function CropImage({
                   e.stopPropagation();
                 }}
               >
-                <div className="fborder-0 relative flex w-full flex-col rounded-lg bg-white shadow-lg outline-none focus:outline-none">
+                <div className="fborder-0 relative flex h-[80%] w-full flex-col rounded-lg bg-white shadow-lg outline-none focus:outline-none">
                   <div className="relative flex-auto p-6">
                     <span className="my-4 text-lg leading-relaxed text-slate-500">
                       {description}

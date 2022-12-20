@@ -1,5 +1,5 @@
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Link from "next/link";
 
 export default function Hero() {
@@ -26,13 +26,6 @@ export default function Hero() {
           </Link>
         </div>
         <div className="mt-10 lg:col-span-5 lg:mt-0 lg:flex">
-          {/* <img
-            className="rounded"
-            src="/athlete.png"
-            alt="Athlete"
-            width="800"
-            height="500"
-          /> */}
           <Image
             src={"/athlete.png"}
             className="rounded"

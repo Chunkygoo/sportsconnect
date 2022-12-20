@@ -1,17 +1,17 @@
 import type { GetStaticProps } from "next";
 import loadNamespaces from "next-translate/loadNamespaces";
-import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { trpc } from "../utils/trpc";
 
 export default function Error() {
-  const router = useRouter();
   trpc.health.getServerHealth.useQuery(undefined, {
     onSuccess() {
-      router.back();
+      toast.error("Error: Please contact sportsconnecthq@gmail.com", {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
     },
     onError() {
-      toast.error("Error: Please contact sportsconnecthq@gmail.com", {
+      toast.error("Server down: Please contact sportsconnecthq@gmail.com", {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     },
@@ -22,7 +22,8 @@ export default function Error() {
         <h1 className="mb-2 text-2xl">An error occured...</h1>
         <div>
           <p className="mt-4">
-            Sorry about that! Please refresh the page or try again later.
+            Sorry about that! Please refresh the page, try again later or
+            contact sportsconnecthq@gmail.com
           </p>
           <p>Team SportsConnect</p>
         </div>

@@ -1,5 +1,5 @@
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { SignInAndUp } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 
 export default function Index() {
@@ -12,7 +12,7 @@ export default function Index() {
             src="/computer.jpg"
             className="pointer-events-none object-cover object-center"
             alt="Computer image"
-            fill={true}
+            layout="fill"
             blurDataURL="/computer_blurred.png"
             placeholder="blur"
           />

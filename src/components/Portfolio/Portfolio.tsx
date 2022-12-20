@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { env } from "../../env/client.mjs";
 import type { portfolioType } from "../../types/portfolio";
 import { trpc } from "../../utils/trpc";
 import yymmdd from "../../utils/yymmdd";
@@ -98,11 +99,10 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                   <Image
                     className="mx-auto h-auto w-full"
                     src={profilePhotoUrl}
-                    alt=""
+                    alt="profile photo"
                     width={600}
                     height={600}
-                    blurDataURL={"/default-photo.jpg"}
-                    placeholder="blur"
+                    priority={true}
                   />
                 ) : (
                   <Image
@@ -227,7 +227,7 @@ const Portfolio = ({ publicView, publicUserData }: portfolioType) => {
                             xmlns="http://www.w3.org/2000/svg"
                             onClick={() =>
                               navigator.clipboard.writeText(
-                                `${process.env.NEXT_PUBLIC_APP_URL}/portfolio/public/${userInfo.id}`
+                                `${env.NEXT_PUBLIC_APP_URL}/portfolio/public/${userInfo.id}`
                               )
                             }
                           >
