@@ -14,6 +14,7 @@ export default function Tooltip({
         hoverColor ? hoverColor : "text-red-500"
       } mx-auto duration-300`}
       onClick={() => {
+        if (!transitionedMessage) return;
         setMessage(transitionedMessage);
         setTimeout(() => {
           setMessage(initialMessage);
