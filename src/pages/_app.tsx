@@ -22,7 +22,6 @@ if (typeof window !== "undefined") {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MyApp: any = ({ Component, pageProps }: AppProps) => {
-  // function MyApp({ Component, pageProps }: AppProps): any {
   const router = useRouter();
   const [prefetchedPreLoggedIn, setPrefetchedPreLoggedIn] = useState(false);
   const [prefetchedPostLoggedIn, setPrefetchedPostLoggedIn] = useState(false);

@@ -24,6 +24,9 @@ const config = {
       },
     ];
   },
+  experimental: {
+    scrollRestoration: true,
+  },
   ...nextTranslate(),
 };
 export default config;
